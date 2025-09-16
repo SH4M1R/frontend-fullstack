@@ -4,8 +4,6 @@ import { GlobalStateProvider } from './store/globalState';
 import NotificationContainer from './components/NotificationContainer';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
-import './styles/tailwind.css'; // Asegúrate de que la ruta sea correcta
-import './styles/global.css'; // Importar correctamente global.css desde la carpeta src/styles/
 
 
 
