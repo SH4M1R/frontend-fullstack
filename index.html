@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de intranet para la gestión de ventas de ropa ModaStyle">
+  <meta name="theme-color" content="#4f46e5">
+
+  <!-- Preload critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <title>ModaStyle - Intranet de Gestión</title>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ModaStyle Intranet",
+    "description": "Sistema de gestión interna para empresa de venta de ropa",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body class="h-full">
+  <noscript>
+    <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+      <h1>JavaScript Requerido</h1>
+      <p>Para usar la intranet de ModaStyle, necesitas habilitar JavaScript en tu navegador.</p>
+    </div>
+  </noscript>
+  <div id="root"></div>
+  <!-- React Script -->
+  <script type="module" src="/src/index.jsx"></script>
+</body>
+</html>
