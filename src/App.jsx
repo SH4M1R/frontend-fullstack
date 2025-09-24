@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Productos from "./pages/Productos";
 
 function App() {
   const location = useLocation();
@@ -16,7 +17,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/productos" element={<Productos />} />
         </Routes>
       </main>
     </div>
