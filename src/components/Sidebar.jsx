@@ -55,7 +55,7 @@ export default function Sidebar() {
           </p>
           {openReportes && (
             <div className="ml-4">
-              <Link to="/reportes/ventas" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛒 Reporte de Ventas</Link>
+              <Link to="/reporte-ventas" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛒 Reporte de Ventas</Link>
               <Link to="/reportes/compras" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛍️ Reporte de Compras </Link>
               <Link to="/reportes/caja" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 💰 Reporte de Caja </Link>
             </div>
