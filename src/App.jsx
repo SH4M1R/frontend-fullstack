@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Productos from "./pages/Productos";
 import ReporteVentas from "./pages/ReporteVentas";
+import Ventas from "./pages/Ventas";
 
 function App() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/productos" element={<Productos />} />
           <Route path="/reporte-ventas" element={<ReporteVentas />} />
+          <Route path="/ventas" element={<Ventas />} />
         </Routes>
       </main>
     </div>

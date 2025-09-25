@@ -8,8 +8,8 @@ export const productos = [
     Descripcion: "Camiseta ligera de material transpirable",
     Talla: "M",
     Color: "Azul",
-    Foto: "https://via.placeholder.com/80",
-    Genero: true, // true = masculino, false = femenino
+    Foto: "https://www.joma.com.pe/wp-content/uploads/2025/03/CAMISETA-ECOCHAMPIONSHIP-NG-NG-F-1.jpg",
+    Genero: true,
     categoria: { idCategoria: 1, nombre: "Ropa" }
   },
   {
@@ -21,7 +21,7 @@ export const productos = [
     Descripcion: "Zapatillas con amortiguación avanzada",
     Talla: "42",
     Color: "Negro",
-    Foto: "https://via.placeholder.com/80",
+    Foto: "https://media.falabella.com/falabellaPE/134098260_01/w=800,h=800,fit=pad",
     Genero: true,
     categoria: { idCategoria: 2, nombre: "Calzado" }
   },
@@ -34,7 +34,7 @@ export const productos = [
     Descripcion: "Leggings ajustados para entrenamiento",
     Talla: "S",
     Color: "Gris",
-    Foto: "https://via.placeholder.com/80",
+    Foto: "https://plazavea.vteximg.com.br/arquivos/ids/28853551-418-418/20371661.jpg",
     Genero: false,
     categoria: { idCategoria: 1, nombre: "Ropa" }
   },
@@ -47,7 +47,7 @@ export const productos = [
     Descripcion: "Sudadera cálida de algodón",
     Talla: "L",
     Color: "Negro",
-    Foto: "https://via.placeholder.com/80",
+    Foto: "https://m.media-amazon.com/images/I/51IdUD6H59L._UY1000_.jpg",
     Genero: true,
     categoria: { idCategoria: 1, nombre: "Ropa" }
   },
@@ -59,8 +59,8 @@ export const productos = [
     Stock: 15,
     Descripcion: "Mochila resistente para uso diario",
     Talla: "-",
-    Color: "Rojo",
-    Foto: "https://via.placeholder.com/80",
+    Color: "Azul",
+    Foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwqLZhn3hnRHNKboaz4otMvnYSlBWWY4CiSg&s",
     Genero: true,
     categoria: { idCategoria: 3, nombre: "Accesorios" }
   }

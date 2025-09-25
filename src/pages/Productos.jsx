@@ -12,6 +12,7 @@ export default function Productos() {
   const [editProductoIndex, setEditProductoIndex] = useState(null);
   const [editCategoriaIndex, setEditCategoriaIndex] = useState(null);
 
+  // Cargar desde localStorage
   useEffect(() => {
     const storedProductos = localStorage.getItem("productos");
     const storedCategorias = localStorage.getItem("categorias");
@@ -19,6 +20,7 @@ export default function Productos() {
     if (storedCategorias) setCategorias(JSON.parse(storedCategorias));
   }, []);
 
+  // Guardar en localStorage
   useEffect(() => {
     localStorage.setItem("productos", JSON.stringify(productos));
   }, [productos]);
@@ -81,11 +83,25 @@ export default function Productos() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">📋 Lista de Productos</h2>
         <div className="space-x-2">
-          <button nClick={() => { etEditProductoIndex(null); setModalProductoOpen(true); }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500" >  ➕ Agregar Producto </button>
+          <button
+            onClick={() => {
+              setEditProductoIndex(null);
+              setModalProductoOpen(true);
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500"
+          >
+            ➕ Agregar Producto
+          </button>
 
-          <button onClick={() => { setEditCategoriaIndex(null); setModalCategoriaOpen(true); }}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500" > ➕ Agregar Categoría </button>
+          <button
+            onClick={() => {
+              setEditCategoriaIndex(null);
+              setModalCategoriaOpen(true);
+            }}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500"
+          >
+            ➕ Agregar Categoría
+          </button>
         </div>
       </div>
 
@@ -120,18 +136,38 @@ export default function Productos() {
                   <td className="border px-2 py-2">{p.Color}</td>
                   <td className="border px-2 py-2">
                     {p.Foto ? (
-                      <img src={p.Foto} alt={p.Producto} className="h-10 w-10 object-cover mx-auto rounded" />
-                    ) : ( "—" )}
+                      <img
+                        src={p.Foto}
+                        alt={p.Producto}
+                        className="h-10 w-10 object-cover mx-auto rounded"
+                      />
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   <td className="border px-2 py-2">
                     {p.Genero ? "Masculino" : "Femenino"}
                   </td>
                   <td className="border px-2 py-2">
-                    { categorias.find( (c) => c.idCategoria === Number(p.Categoria) )?.nombre || "—" }
+                    {
+                      categorias.find(
+                        (c) => c.idCategoria === Number(p.Categoria)
+                      )?.nombre || "—"
+                    }
                   </td>
                   <td className="border px-2 py-2 space-x-2">
-                    <button onClick={() => editarProducto(index)} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400" > ✏️ </button>
-                    <button onClick={() => eliminarProducto(index)} className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500" > 🗑️ </button>
+                    <button
+                      onClick={() => editarProducto(index)}
+                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => eliminarProducto(index)}
+                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
               ))
