@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { usuarios } from '../data/usuario';
 
@@ -11,7 +11,6 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const userFound = usuarios.find(
       (user) => user.username === username && user.password === password
     );
@@ -26,28 +25,39 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">Iniciar Sesión</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-200 px-4">
+      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md space-y-6">
+        <div className="flex flex-col items-center">
+          <LockClosedIcon className="h-12 w-12 text-indigo-600" />
+          <h2 className="mt-2 text-2xl font-bold text-gray-800">Bienvenido</h2>
+          <p className="text-sm text-gray-500">Inicia sesión para continuar</p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Usuario</label>
             <input
-              type="text" placeholder="Usuario"
-              className="block w-full px-3 py-3 border border-gray-300 rounded-t-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              type="text"
+              placeholder="Ingresa tu usuario"
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <div className="relative">
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+            <div className="relative mt-1">
               <input
-                type={showPassword ? 'text' : 'password'} placeholder="Contraseña"
-                className="block w-full px-3 py-3 border border-gray-300 rounded-b-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Ingresa tu contraseña"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
-                type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -58,7 +68,13 @@ export default function Login() {
               </button>
             </div>
           </div>
-          <button  type="submit" className="w-full py-3 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-colors"> Iniciar sesión</button>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-200"
+          >
+            Iniciar sesión
+          </button>
         </form>
       </div>
     </div>
