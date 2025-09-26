@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
 import {
   ChartBarIcon,
   CalendarIcon,
@@ -9,7 +8,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 const SalesReport = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dateRange, setDateRange] = useState('month');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -37,7 +35,6 @@ const SalesReport = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">    
       <div className="flex">
-        <Sidebar/>
           <main className="flex-1 p-6 md:ml-40">
             <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
               <div>

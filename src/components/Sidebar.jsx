@@ -1,79 +1,173 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {
+  ChartBarIcon,
+  CurrencyDollarIcon,
+  ShoppingCartIcon,
+  ShoppingBagIcon,
+  Cog6ToothIcon,
+  UserGroupIcon,
+  UserIcon,
+  ClipboardDocumentListIcon,
+  TruckIcon,
+  ArrowTrendingUpIcon
+} from '@heroicons/react/24/outline';
+
+function Collapsible({ open, children }) {
+  const ref = useRef(null);
+  const [maxH, setMaxH] = useState("max-h-0");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (open) {
+      // calcular altura real y aplicar como inline style para transición suave
+      const scrollH = el.scrollHeight;
+      el.style.maxHeight = `${scrollH}px`;
+    } else {
+      el.style.maxHeight = `0px`;
+    }
+  }, [open]);
+
+  return (
+    <div
+      ref={ref}
+      className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+      aria-hidden={!open}
+    >
+      <div className="opacity-100 transition-opacity duration-200 ease-in-out">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export default function Sidebar() {
   const nombre = localStorage.getItem("nombreUsuario") || "Invitado";
-
   const [openAdmin, setOpenAdmin] = useState(false);
   const [openReportes, setOpenReportes] = useState(false);
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-60 bg-gray-900 text-white flex flex-col justify-between shadow-lg">
+    <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800 text-white shadow-xl flex flex-col justify-between">
       {/* Título */}
-      <div className="p-4 border-b border-gray-700">
-        <h2 className="text-xl font-bold text-center">ModaStyle - YOURBRAND</h2>
+      <div className="p-5 border-b border-gray-700">
+        <h2 className="text-2xl font-bold text-center text-indigo-300 tracking-wide">ModaStyle</h2>
+        <p className="text-sm text-center text-indigo-500">YOURBRAND</p>
       </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 overflow-y-auto">
-        {nombre && (
-          <div className="p-4 bg-gray-800 text-center rounded-md mx-2 my-4">
-            <p className="font-medium">👤 {nombre}</p>
-          </div>
-        )}
+      {/* Usuario */}
+      <div className="px-4 py-3 bg-gray-900 border-b border-gray-700 text-center">
+        <p className="text-sm font-medium"><UserIcon className="inline h-4 w-4 mr-1 align-text-bottom text-indigo-300" /> {nombre}</p>
+      </div>
 
-        <nav className="px-2">
-          <p className="text-gray-400 uppercase text-xs px-2 mt-4 mb-2">General</p>
-          <Link to="/dashboard" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 📊 Dashboard </Link>
-          <Link to="/caja" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 💰 Caja </Link>
-          <Link to="/ventas" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛒 Realizar Venta </Link>
-          <Link to="/compras" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛍️ Realizar Compra </Link>
+      {/* Navegación */}
+      <nav className="flex-1 px-4 py-4 overflow-y-auto space-y-2">
+        <p className="text-indigo-400 uppercase text-xs font-semibold">General</p>
 
-          {/* Administración desplegable */}
-          <p
+        <Link to="/dashboard" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+          <ChartBarIcon className="h-5 w-5 text-indigo-300" />
+          <span>Dashboard</span>
+        </Link>
+
+        <Link to="/caja" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+          <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
+          <span>Caja</span>
+        </Link>
+
+        <Link to="/ventas" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+          <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
+          <span>Venta</span>
+        </Link>
+
+        <Link to="/compras" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+          <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
+          <span>Compra</span>
+        </Link>
+
+        {/* Administración */}
+        <div>
+          <button
             onClick={() => setOpenAdmin(!openAdmin)}
-            className="cursor-pointer flex justify-between items-center px-4 py-2 rounded-md hover:bg-gray-700 transition-colors mt-6"
+            className="w-full text-left px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors flex justify-between items-center"
+            aria-expanded={openAdmin}
           >
-            <span>👥 Administración</span>
-            <span>{openAdmin ? "▲" : "▼"}</span>
-          </p>
-          {openAdmin && (
-            <div className="ml-4">
-              <Link to="/usuarios" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 👤 Gestión de Usuarios </Link>
-              <Link to="/productos" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 📋 Gestión de Productos </Link>
-              <Link to="/proveedores" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🚚 Gestión de Proveedores </Link>
+            <div className="flex items-center gap-2">
+              <UserGroupIcon className="h-5 w-5 text-indigo-300" />
+              <span>Administración</span>
             </div>
-          )}
+            <span className="text-sm">{openAdmin ? "▲" : "▼"}</span>
+          </button>
 
-          {/* Reportes desplegable */}
-          <p
+          <Collapsible open={openAdmin}>
+            <div className="ml-4 mt-1 space-y-1 py-2">
+              <Link to="/usuarios" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <UserIcon className="h-5 w-5 text-indigo-300" />
+                <span>Gestión de Usuarios</span>
+              </Link>
+              <Link to="/productos" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <ClipboardDocumentListIcon className="h-5 w-5 text-indigo-300" />
+                <span>Gestión de Productos</span>
+              </Link>
+              <Link to="/proveedores" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <TruckIcon className="h-5 w-5 text-indigo-300" />
+                <span>Gestión de Proveedores</span>
+              </Link>
+            </div>
+          </Collapsible>
+        </div>
+
+        {/* Reportes */}
+        <div>
+          <button
             onClick={() => setOpenReportes(!openReportes)}
-            className="cursor-pointer flex justify-between items-center px-4 py-2 rounded-md hover:bg-gray-700 transition-colors mt-6"
+            className="w-full text-left px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors flex justify-between items-center"
+            aria-expanded={openReportes}
           >
-            <span>📈 Reportes</span>
-            <span>{openReportes ? "▲" : "▼"}</span>
-          </p>
-          {openReportes && (
-            <div className="ml-4">
-              <Link to="/reporte-ventas" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛒 Reporte de Ventas</Link>
-              <Link to="/reportes/compras" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🛍️ Reporte de Compras </Link>
-              <Link to="/reportes/caja" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 💰 Reporte de Caja </Link>
+            <div className="flex items-center gap-2">
+              <ArrowTrendingUpIcon className="h-5 w-5 text-indigo-300" />
+              <span>Reportes</span>
             </div>
-          )}
+            <span className="text-sm">{openReportes ? "▲" : "▼"}</span>
+          </button>
 
-          {/* Configuración */}
-          <Link to="/configuracion" className="block px-4 py-2 mt-6 rounded-md hover:bg-gray-700 transition-colors"
-          > ⚙️ Configuración </Link>
-        </nav>
-      </div>
+          <Collapsible open={openReportes}>
+            <div className="ml-4 mt-1 space-y-1 py-2">
+              <Link to="/reporte-ventas" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
+                <span>Reporte de Ventas</span>
+              </Link>
+              <Link to="/reportes/compras" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
+                <span>Reporte de Compras</span>
+              </Link>
+              <Link to="/reportes/caja" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+                <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
+                <span>Reporte de Caja</span>
+              </Link>
+            </div>
+          </Collapsible>
+        </div>
+
+        {/* Configuración */}
+        <Link to="/configuracion" className="flex items-center gap-2 px-4 py-2 mt-4 rounded-md hover:bg-indigo-700/40 transition-colors">
+          <Cog6ToothIcon className="h-5 w-5 text-indigo-300" />
+          <span>Configuración</span>
+        </Link>
+      </nav>
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-700">
-        <Link to="/login" className="block text-center px-4 py-2 bg-red-600 rounded-md hover:bg-red-500 transition-colors"
+        <Link
+          to="/login"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 rounded-md hover:bg-red-500 transition-colors"
           onClick={() => {
             localStorage.removeItem("isAuthenticated");
             localStorage.removeItem("nombreUsuario");
-          }}>⏻ Cerrar Sesión</Link>
+          }}
+        >
+          <ArrowTrendingUpIcon className="h-5 w-5 text-white" />
+          <span>Cerrar Sesión</span>
+        </Link>
       </div>
     </aside>
   );
