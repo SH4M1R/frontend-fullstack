@@ -41,7 +41,7 @@ export default function Sidebar() {
             <div className="ml-4">
               <Link to="/gestionUsuarios" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 👤 Gestión de Usuarios </Link>
               <Link to="/productos" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 📋 Gestión de Productos </Link>
-              <Link to="/proveedores" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🚚 Gestión de Proveedores </Link>
+              <Link to="/gestionProveedores" className="block px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"> 🚚 Gestión de Proveedores </Link>
             </div>
           )}
 

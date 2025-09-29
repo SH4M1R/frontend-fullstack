@@ -6,6 +6,8 @@ import Productos from "./pages/Productos";
 import ReporteVentas from "./pages/ReporteVentas";
 import Ventas from "./pages/Ventas";
 import GestionUsuarios from "./pages/GestionUsuarios";
+import GestionProveedores from "./pages/GestionProveedores";
+import Configuracion from "./pages/Configuracion";
 
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
           <Route path="/reporte-ventas" element={<ReporteVentas />} />
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/gestionUsuarios" element={<GestionUsuarios />} />
+          <Route path="/gestionProveedores" element={<GestionProveedores />} />
+          <Route path="/configuracion" element={<Configuracion />} />
             
 
         </Routes>
