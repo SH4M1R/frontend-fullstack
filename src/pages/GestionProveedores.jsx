@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import BotonAgregarProveedor from "../components/AddProveedor";
 
-
 export default function GestionProveedores() {
   const [proveedores, setProveedores] = useState([]);
   const [modalProveedorOpen, setModalProveedorOpen] = useState(false);
   const [editProveedorIndex, setEditProveedorIndex] = useState(null);
 
-  // Cargar desde localStorage
   useEffect(() => {
     const storedProveedores = localStorage.getItem("proveedores");
     if (storedProveedores) setProveedores(JSON.parse(storedProveedores));
   }, []);
 
-  // Guardar en localStorage
   useEffect(() => {
     localStorage.setItem("proveedores", JSON.stringify(proveedores));
   }, [proveedores]);
@@ -91,15 +88,11 @@ export default function GestionProveedores() {
                     <button
                       onClick={() => editarProveedor(index)}
                       className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
-                    >
-                      ✏️
-                    </button>
+                    > ✏️ </button>
                     <button
                       onClick={() => eliminarProveedor(index)}
                       className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                    >
-                      🗑️
-                    </button>
+                    > 🗑️ </button>
                   </td>
                 </tr>
               ))

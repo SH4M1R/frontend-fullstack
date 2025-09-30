@@ -12,7 +12,6 @@ export default function Productos() {
   const [editProductoIndex, setEditProductoIndex] = useState(null);
   const [editCategoriaIndex, setEditCategoriaIndex] = useState(null);
 
-  // Cargar desde localStorage
   useEffect(() => {
     const storedProductos = localStorage.getItem("productos");
     const storedCategorias = localStorage.getItem("categorias");
@@ -20,14 +19,15 @@ export default function Productos() {
     if (storedCategorias) setCategorias(JSON.parse(storedCategorias));
   }, []);
 
-  // Guardar en localStorage
-  useEffect(() => {
-    localStorage.setItem("productos", JSON.stringify(productos));
-  }, [productos]);
+  const actualizarProductos = (lista) => {
+    setProductos(lista);
+    localStorage.setItem("productos", JSON.stringify(lista));
+  };
 
-  useEffect(() => {
-    localStorage.setItem("categorias", JSON.stringify(categorias));
-  }, [categorias]);
+  const actualizarCategorias = (lista) => {
+    setCategorias(lista);
+    localStorage.setItem("categorias", JSON.stringify(lista));
+  };
 
   const guardarProducto = (producto) => {
     if (editProductoIndex !== null) {
@@ -35,14 +35,20 @@ export default function Productos() {
       actualizados[editProductoIndex] = {
         ...producto,
         idProducto: productos[editProductoIndex].idProducto,
+        Categoria: Number(producto.Categoria),
       };
-      setProductos(actualizados);
+      actualizarProductos(actualizados);
       setEditProductoIndex(null);
     } else {
-      setProductos([
+      const nuevos = [
         ...productos,
-        { idProducto: productos.length + 1, ...producto },
-      ]);
+        {
+          idProducto: Date.now(),
+          ...producto,
+          Categoria: Number(producto.Categoria),
+        },
+      ];
+      actualizarProductos(nuevos);
     }
     setModalProductoOpen(false);
   };
@@ -54,13 +60,14 @@ export default function Productos() {
         ...categoria,
         idCategoria: categorias[editCategoriaIndex].idCategoria,
       };
-      setCategorias(actualizadas);
+      actualizarCategorias(actualizadas);
       setEditCategoriaIndex(null);
     } else {
-      setCategorias([
+      const nuevas = [
         ...categorias,
-        { idCategoria: categorias.length + 1, ...categoria },
-      ]);
+        { idCategoria: Date.now(), ...categoria },
+      ];
+      actualizarCategorias(nuevas);
     }
     setModalCategoriaOpen(false);
   };
@@ -73,113 +80,98 @@ export default function Productos() {
   const eliminarProducto = (index) => {
     if (confirm("¿Seguro que deseas eliminar este producto?")) {
       const actualizados = productos.filter((_, i) => i !== index);
-      setProductos(actualizados);
+      actualizarProductos(actualizados);
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 min-h-screen">
       {/* Encabezado */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">📋 Lista de Productos</h2>
-        <div className="space-x-2">
-          <button
-            onClick={() => {
+      <div className="flex justify-between items-center mb-6 border-b pb-3">
+        <h2 className="text-2xl font-bold text-gray-700 flex items-center gap-2">
+          📦 Gestión de Productos
+        </h2>
+        <div className="space-x-3">
+          <button onClick={() => {
               setEditProductoIndex(null);
               setModalProductoOpen(true);
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500"
-          >
-            ➕ Agregar Producto
-          </button>
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-500"
+          > + Nuevo Producto </button>
 
-          <button
-            onClick={() => {
+          <button onClick={() => {
               setEditCategoriaIndex(null);
               setModalCategoriaOpen(true);
             }}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500"
-          >
-            ➕ Agregar Categoría
-          </button>
+            className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-500"
+          > + Nueva Categoría </button>
         </div>
       </div>
 
       {/* Tabla de productos */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300 text-sm">
-          <thead className="bg-gray-100 text-center">
-            <tr>
-              <th className="border px-2 py-2">ID</th>
-              <th className="border px-2 py-2">Producto</th>
-              <th className="border px-2 py-2">Precio Compra</th>
-              <th className="border px-2 py-2">Precio Venta</th>
-              <th className="border px-2 py-2">Stock</th>
-              <th className="border px-2 py-2">Talla</th>
-              <th className="border px-2 py-2">Color</th>
-              <th className="border px-2 py-2">Foto</th>
-              <th className="border px-2 py-2">Género</th>
-              <th className="border px-2 py-2">Categoría</th>
-              <th className="border px-2 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.length > 0 ? (
-              productos.map((p, index) => (
-                <tr key={p.idProducto} className="text-center hover:bg-gray-50">
-                  <td className="border px-2 py-2">{p.idProducto}</td>
-                  <td className="border px-2 py-2">{p.Producto}</td>
-                  <td className="border px-2 py-2">S/ {p.PrecioCompra}</td>
-                  <td className="border px-2 py-2">S/ {p.PrecioVenta}</td>
-                  <td className="border px-2 py-2">{p.Stock}</td>
-                  <td className="border px-2 py-2">{p.Talla}</td>
-                  <td className="border px-2 py-2">{p.Color}</td>
-                  <td className="border px-2 py-2">
-                    {p.Foto ? (
-                      <img
-                        src={p.Foto}
-                        alt={p.Producto}
-                        className="h-10 w-10 object-cover mx-auto rounded"
-                      />
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td className="border px-2 py-2">
-                    {p.Genero ? "Masculino" : "Femenino"}
-                  </td>
-                  <td className="border px-2 py-2">
-                    {
-                      categorias.find(
-                        (c) => c.idCategoria === Number(p.Categoria)
-                      )?.nombre || "—"
-                    }
-                  </td>
-                  <td className="border px-2 py-2 space-x-2">
-                    <button
-                      onClick={() => editarProducto(index)}
-                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => eliminarProducto(index)}
-                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-gray-100 text-gray-700 text-center">
               <tr>
-                <td colSpan="11" className="text-center py-4 text-gray-500">
-                  No hay productos registrados
-                </td>
+                <th className="border px-2 py-3">ID</th>
+                <th className="border px-2 py-3">Producto</th>
+                <th className="border px-2 py-3">Precio Compra</th>
+                <th className="border px-2 py-3">Precio Venta</th>
+                <th className="border px-2 py-3">Stock</th>
+                <th className="border px-2 py-3">Talla</th>
+                <th className="border px-2 py-3">Color</th>
+                <th className="border px-2 py-3">Foto</th>
+                <th className="border px-2 py-3">Género</th>
+                <th className="border px-2 py-3">Categoría</th>
+                <th className="border px-2 py-3">Acciones</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {productos.length > 0 ? (
+                productos.map((p, index) => (
+                  <tr
+                    key={p.idProducto}
+                    className="text-center hover:bg-gray-50"
+                  >
+                    <td className="border px-2 py-2">{p.idProducto}</td>
+                    <td className="border px-2 py-2 font-medium">{p.Producto}</td>
+                    <td className="border px-2 py-2 text-blue-600 font-semibold">
+                      S/ {p.PrecioCompra}
+                    </td>
+                    <td className="border px-2 py-2 text-green-600 font-semibold">
+                      S/ {p.PrecioVenta}
+                    </td>
+                    <td className="border px-2 py-2">{p.Stock}</td>
+                    <td className="border px-2 py-2">{p.Talla}</td>
+                    <td className="border px-2 py-2">{p.Color}</td>
+                    <td className="border px-2 py-2">
+                      {p.Foto ? (
+                        <img src={p.Foto} alt={p.Producto} className="h-10 w-10 object-cover mx-auto rounded shadow" />
+                      ) : (  "—" )}
+                    </td>
+                    <td className="border px-2 py-2">
+                      {p.Genero ? "Masculino" : "Femenino"}
+                    </td>
+                    <td className="border px-2 py-2">
+                      { categorias.find( (c) => c.idCategoria === Number(p.Categoria) )?.nombre || "—" }
+                    </td>
+                    <td className="border px-2 py-2 space-x-2">
+                      <button onClick={() => editarProducto(index)}
+                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400 shadow" > ✏️ </button>
+                      <button onClick={() => eliminarProducto(index)}
+                        className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500 shadow" > 🗑️ </button>
+                    </td>
+                  </tr>
+                )) ) : (
+                <tr>
+                  <td colSpan="11" className="text-center py-6 text-gray-500 italic"
+                  > No hay productos registrados </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modales */}
@@ -187,7 +179,10 @@ export default function Productos() {
         <AgregarProducto
           onClose={() => setModalProductoOpen(false)}
           onSave={guardarProducto}
-          initialData={editProductoIndex !== null ? productos[editProductoIndex] : null}
+          initialData={
+            editProductoIndex !== null ? productos[editProductoIndex] : null
+          }
+          categorias={categorias}
         />
       )}
 
@@ -195,7 +190,9 @@ export default function Productos() {
         <AgregarCategoria
           onClose={() => setModalCategoriaOpen(false)}
           onSave={guardarCategoria}
-          initialData={editCategoriaIndex !== null ? categorias[editCategoriaIndex] : null}
+          initialData={
+            editCategoriaIndex !== null ? categorias[editCategoriaIndex] : null
+          }
         />
       )}
     </div>

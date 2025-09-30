@@ -8,31 +8,53 @@ export default function MetodoPago({ total, onClose }) {
 
   const vuelto = efectivo ? Number(efectivo) - total : 0;
 
+  const procesarPago = () => {
+    if (!metodo) {
+      alert("Selecciona un método de pago.");
+      return;
+    }
+    if (metodo === "efectivo" && (!efectivo || Number(efectivo) < total)) {
+      alert("El monto recibido debe ser mayor o igual al total.");
+      return;
+    }
+    if (metodo === "izipay" && (tarjeta.length !== 4 || !boleta)) {
+      alert("Ingresa los últimos 4 dígitos de la tarjeta y el número de boleta.");
+      return;
+    }
+
+    alert("Pago procesado correctamente ✅");
+    onClose();
+    setTimeout(() => window.location.reload(), 100);
+  };
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-lg w-96 p-6">
-        <h2 className="text-xl font-bold mb-4">💳 Seleccionar Método de Pago</h2>
-        <p className="mb-4">
-          Total a pagar: <strong>S/ {total.toFixed(2)}</strong>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 animate-fadeIn">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          💳 Método de Pago
+        </h2>
+        <p className="text-center text-gray-700 mb-6 text-lg">
+          Total a pagar: <span className="font-semibold text-green-600">S/ {total.toFixed(2)}</span>
         </p>
 
+        {/* Selección de método */}
         {!metodo && (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-4">
             <button
               onClick={() => setMetodo("efectivo")}
-              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-500"
+              className="w-full py-3 rounded-xl text-white font-semibold shadow-lg hover:scale-105 transform transition-all duration-200 bg-gradient-to-r from-green-500 to-green-700"
             >
               Efectivo
             </button>
             <button
               onClick={() => setMetodo("yape")}
-              className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-500"
+              className="w-full py-3 rounded-xl text-white font-semibold shadow-lg hover:scale-105 transform transition-all duration-200 bg-gradient-to-r from-purple-500 to-purple-700"
             >
               Yape
             </button>
             <button
               onClick={() => setMetodo("izipay")}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500"
+              className="w-full py-3 rounded-xl text-white font-semibold shadow-lg hover:scale-105 transform transition-all duration-200 bg-gradient-to-r from-blue-500 to-blue-700"
             >
               Izipay
             </button>
@@ -41,65 +63,73 @@ export default function MetodoPago({ total, onClose }) {
 
         {/* Efectivo */}
         {metodo === "efectivo" && (
-          <div>
-            <label className="block mb-2 font-medium">Monto recibido:</label>
+          <div className="bg-green-50 p-5 rounded-2xl mb-4 shadow-inner border border-green-200">
+            <label className="block mb-2 font-medium text-green-700">Monto recibido:</label>
             <input
               type="number"
               value={efectivo}
               onChange={(e) => setEfectivo(e.target.value)}
-              className="w-full border rounded px-3 py-2 mb-3"
               placeholder="Ingrese el monto"
+              className="w-full border border-green-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             />
-            <p>
+            <p className="mt-2 text-lg">
               Vuelto:{" "}
-              <strong className={vuelto < 0 ? "text-red-600" : "text-green-600"}>
+              <span className={vuelto < 0 ? "text-red-600 font-semibold" : "text-green-600 font-semibold"}>
                 S/ {vuelto.toFixed(2)}
-              </strong>
+              </span>
             </p>
           </div>
         )}
 
         {/* Yape */}
         {metodo === "yape" && (
-          <div className="flex flex-col items-center">
-            <p className="mb-2">Escanea este código QR:</p>
+          <div className="bg-purple-50 p-6 rounded-2xl mb-4 shadow-inner border border-purple-200 flex flex-col items-center">
+            <p className="mb-3 text-purple-700 font-medium">Escanea este código QR:</p>
             <img
               src="https://via.placeholder.com/150x150.png?text=QR+Yape"
               alt="QR Yape"
-              className="border p-2"
+              className="border-2 border-purple-300 rounded-lg shadow-md"
             />
           </div>
         )}
 
         {/* Izipay */}
         {metodo === "izipay" && (
-          <div>
-            <label className="block mb-2 font-medium">
-              Últimos 4 dígitos de la tarjeta:
-            </label>
+          <div className="bg-blue-50 p-5 rounded-2xl mb-4 shadow-inner border border-blue-200 space-y-3">
+            <label className="block font-medium text-blue-700">Últimos 4 dígitos de la tarjeta:</label>
             <input
               type="text"
               maxLength={4}
               value={tarjeta}
               onChange={(e) => setTarjeta(e.target.value)}
-              className="w-full border rounded px-3 py-2 mb-3"
               placeholder="1234"
+              className="w-full border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-
-            <label className="block mb-2 font-medium">Número de boleta:</label>
+            <label className="block font-medium text-blue-700">Número de boleta:</label>
             <input
               type="text"
               value={boleta}
               onChange={(e) => setBoleta(e.target.value)}
-              className="w-full border rounded px-3 py-2"
               placeholder="Ingrese nro de boleta"
+              className="w-full border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
         )}
 
-        <div className="mt-6 space-y-2">
-          <button onClick={onClose} className="w-full bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">❌ Cancelar</button>
-            <button onClick={() => alert('Pago procesado')} className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500">✅ Confirmar Pago</button>
+        {/* Botones */}
+        <div className="flex flex-col gap-3 mt-4">
+          <button
+            onClick={onClose}
+            className="w-full py-2 rounded-2xl bg-gray-400 text-white font-semibold hover:bg-gray-500 transition-colors shadow"
+          >
+            ❌ Cancelar
+          </button>
+          <button
+            onClick={procesarPago}
+            className="w-full py-2 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold shadow-lg hover:scale-105 transform transition-all duration-200"
+          >
+            ✅ Confirmar Pago
+          </button>
         </div>
       </div>
     </div>

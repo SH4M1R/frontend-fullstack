@@ -10,18 +10,18 @@ import {
   UserIcon,
   ClipboardDocumentListIcon,
   TruckIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
+  PowerIcon
 } from '@heroicons/react/24/outline';
 
 function Collapsible({ open, children }) {
   const ref = useRef(null);
-  const [maxH, setMaxH] = useState("max-h-0");
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
     if (open) {
-      // calcular altura real y aplicar como inline style para transición suave
       const scrollH = el.scrollHeight;
       el.style.maxHeight = `${scrollH}px`;
     } else {
@@ -51,35 +51,54 @@ export default function Sidebar() {
     <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800 text-white shadow-xl flex flex-col justify-between">
       {/* Título */}
       <div className="p-5 border-b border-gray-700">
-        <h2 className="text-2xl font-bold text-center text-indigo-300 tracking-wide">ModaStyle</h2>
+        <h2 className="text-2xl font-bold text-center text-indigo-300 tracking-wide">
+          ModaStyle
+        </h2>
         <p className="text-sm text-center text-indigo-500">YOURBRAND</p>
       </div>
 
       {/* Usuario */}
       <div className="px-4 py-3 bg-gray-900 border-b border-gray-700 text-center">
-        <p className="text-sm font-medium"><UserIcon className="inline h-4 w-4 mr-1 align-text-bottom text-indigo-300" /> {nombre}</p>
+        <p className="text-sm font-medium flex justify-center items-center gap-1">
+          <UserIcon className="h-4 w-4 text-indigo-300" />
+          {nombre}
+        </p>
       </div>
 
       {/* Navegación */}
       <nav className="flex-1 px-4 py-4 overflow-y-auto space-y-2">
-        <p className="text-indigo-400 uppercase text-xs font-semibold">General</p>
+        <p className="text-indigo-400 uppercase text-xs font-semibold">
+          General
+        </p>
 
-        <Link to="/dashboard" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+        <Link
+          to="/dashboard"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        >
           <ChartBarIcon className="h-5 w-5 text-indigo-300" />
           <span>Dashboard</span>
         </Link>
 
-        <Link to="/caja" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+        <Link
+          to="/caja"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        >
           <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
           <span>Caja</span>
         </Link>
 
-        <Link to="/ventas" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+        <Link
+          to="/ventas"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        >
           <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
           <span>Venta</span>
         </Link>
 
-        <Link to="/compras" className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors">
+        <Link
+          to="/compras"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        >
           <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
           <span>Compra</span>
         </Link>
@@ -100,15 +119,24 @@ export default function Sidebar() {
 
           <Collapsible open={openAdmin}>
             <div className="ml-4 mt-1 space-y-1 py-2">
-              <Link to="/usuarios" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/gestionUsuarios"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <UserIcon className="h-5 w-5 text-indigo-300" />
                 <span>Gestión de Usuarios</span>
               </Link>
-              <Link to="/productos" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/productos"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <ClipboardDocumentListIcon className="h-5 w-5 text-indigo-300" />
                 <span>Gestión de Productos</span>
               </Link>
-              <Link to="/proveedores" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/gestionProveedores"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <TruckIcon className="h-5 w-5 text-indigo-300" />
                 <span>Gestión de Proveedores</span>
               </Link>
@@ -132,15 +160,24 @@ export default function Sidebar() {
 
           <Collapsible open={openReportes}>
             <div className="ml-4 mt-1 space-y-1 py-2">
-              <Link to="/reporte-ventas" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/reporte-ventas"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
                 <span>Reporte de Ventas</span>
               </Link>
-              <Link to="/reportes/compras" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/reportes/compras"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
                 <span>Reporte de Compras</span>
               </Link>
-              <Link to="/reportes/caja" className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors">
+              <Link
+                to="/reportes/caja"
+                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
+              >
                 <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
                 <span>Reporte de Caja</span>
               </Link>
@@ -149,7 +186,10 @@ export default function Sidebar() {
         </div>
 
         {/* Configuración */}
-        <Link to="/configuracion" className="flex items-center gap-2 px-4 py-2 mt-4 rounded-md hover:bg-indigo-700/40 transition-colors">
+        <Link
+          to="/configuracion"
+          className="flex items-center gap-2 px-4 py-2 mt-4 rounded-md hover:bg-indigo-700/40 transition-colors"
+        >
           <Cog6ToothIcon className="h-5 w-5 text-indigo-300" />
           <span>Configuración</span>
         </Link>
@@ -165,7 +205,7 @@ export default function Sidebar() {
             localStorage.removeItem("nombreUsuario");
           }}
         >
-          <ArrowTrendingUpIcon className="h-5 w-5 text-white" />
+          <PowerIcon className="h-5 w-5 text-white" />
           <span>Cerrar Sesión</span>
         </Link>
       </div>

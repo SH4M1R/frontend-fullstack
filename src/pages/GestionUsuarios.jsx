@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// Componente para agregar o editar usuario
 function ModalUsuario({ onClose, onSave, initialData }) {
   const [form, setForm] = useState(
     initialData || {
@@ -9,7 +8,7 @@ function ModalUsuario({ onClose, onSave, initialData }) {
       email: "",
       telefono: "",
       direccion: "",
-      tipo: "Cliente", // Cliente o Usuario
+      tipo: "Cliente",
     }
   );
 
@@ -121,13 +120,11 @@ export default function GestionUsuarios() {
   const [modalUsuarioOpen, setModalUsuarioOpen] = useState(false);
   const [editUsuarioIndex, setEditUsuarioIndex] = useState(null);
 
-  // Cargar desde localStorage
   useEffect(() => {
     const storedUsuarios = localStorage.getItem("usuarios");
     if (storedUsuarios) setUsuarios(JSON.parse(storedUsuarios));
   }, []);
 
-  // Guardar en localStorage
   useEffect(() => {
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
   }, [usuarios]);
@@ -173,9 +170,7 @@ export default function GestionUsuarios() {
             setModalUsuarioOpen(true);
           }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500"
-        >
-          ➕ Agregar
-        </button>
+        > + Agregar </button>
       </div>
 
       {/* Tabla de usuarios/clientes */}
@@ -208,15 +203,11 @@ export default function GestionUsuarios() {
                     <button
                       onClick={() => editarUsuario(index)}
                       className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
-                    >
-                      ✏️
-                    </button>
+                    > ✏️ </button>
                     <button
                       onClick={() => eliminarUsuario(index)}
                       className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                    >
-                      🗑️
-                    </button>
+                    > 🗑️ </button>
                   </td>
                 </tr>
               ))
