@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { productos as dataProductos } from "../data/productos";
+import React, { useState, useEffect } from "react";
+import { productos as dataProductos } from "../data/productos"; // Productos estáticos
 import MetodoPago from "../components/MetodoPago";
 import {
   ShoppingCartIcon,
@@ -12,11 +12,24 @@ export default function Ventas() {
   const [busqueda, setBusqueda] = useState("");
   const [carrito, setCarrito] = useState([]);
   const [modalPagoOpen, setModalPagoOpen] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
 
-  const productosFiltrados = dataProductos.filter((p) =>
+  useEffect(() => {
+    const storedProductos = localStorage.getItem("productos");
+    const storedCategorias = localStorage.getItem("categorias");
+
+    const productosGuardados = storedProductos ? JSON.parse(storedProductos) : [];
+    const categoriasGuardadas = storedCategorias ? JSON.parse(storedCategorias) : [];
+
+    setProductos([...dataProductos, ...productosGuardados]);
+    setCategorias(categoriasGuardadas);
+  }, []);
+
+  const productosFiltrados = productos.filter((p) =>
     p.Producto.toLowerCase().includes(busqueda.toLowerCase())
   );
-
+  
   const agregarAlCarrito = (producto) => {
     const existe = carrito.find((item) => item.idProducto === producto.idProducto);
     if (existe) {
@@ -42,7 +55,7 @@ export default function Ventas() {
       {/* Sección de productos */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">Venta</h2>
+          <h2 className="text-2xl font-bold text-gray-800">📦 Venta</h2>
         </div>
 
         {/* Buscador */}
@@ -83,12 +96,17 @@ export default function Ventas() {
               </div>
 
               <h3 className="text-lg font-semibold mt-3 truncate text-gray-800">{p.Producto}</h3>
-              <p className="text-gray-500 text-sm line-clamp-2">{p.Descripcion}</p>
-
               <div className="mt-3 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Stock: <span className="font-medium text-gray-800">{p.Stock}</span></p>
-                  <p className="text-sm text-gray-600">Cat: <span className="font-medium text-gray-800">{p.categoria.nombre}</span></p>
+                  <p className="text-sm text-gray-600">
+                    Stock: <span className="font-medium text-gray-800">{p.Stock}</span>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    CAT:{" "}
+                    <span className="font-medium text-gray-800">
+                      {categorias.find(c => c.idCategoria === Number(p.Categoria))?.nombre || "—"}
+                    </span>
+                  </p>
                 </div>
                 <p className="text-indigo-500 font-bold">S/ {p.PrecioVenta}</p>
               </div>
@@ -139,7 +157,9 @@ export default function Ventas() {
 
         {/* Total */}
         <div className="border-t pt-4 mt-4">
-          <p className="text-lg font-bold text-gray-800">Total: <span className="text-indigo-600">S/ {total}</span></p>
+          <p className="text-lg font-bold text-gray-800">
+            Total: <span className="text-indigo-600">S/ {total}</span>
+          </p>
           <button
             onClick={() => setModalPagoOpen(true)}
             className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 flex items-center justify-center gap-2"

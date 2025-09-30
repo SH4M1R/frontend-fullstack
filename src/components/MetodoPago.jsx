@@ -118,18 +118,12 @@ export default function MetodoPago({ total, onClose }) {
 
         {/* Botones */}
         <div className="flex flex-col gap-3 mt-4">
-          <button
-            onClick={onClose}
+          <button onClick={onClose}
             className="w-full py-2 rounded-2xl bg-gray-400 text-white font-semibold hover:bg-gray-500 transition-colors shadow"
-          >
-            ❌ Cancelar
-          </button>
-          <button
-            onClick={procesarPago}
+          > ❌ Cancelar </button>
+          <button onClick={procesarPago}
             className="w-full py-2 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold shadow-lg hover:scale-105 transform transition-all duration-200"
-          >
-            ✅ Confirmar Pago
-          </button>
+          > ✅ Confirmar Pago </button>
         </div>
       </div>
     </div>
