@@ -3,12 +3,20 @@ PROYECTO: PAGINA WEB VENTA DE ROPA
 Se agregará todo el apartado frontend del proyecto usando el framework de REACT
 =======
 # Instalación del proyecto
-git clone: https://github.com/SH4M1R/frontend-fullstack/main
+git clone: 
+```console
+https://github.com/SH4M1R/frontend-fullstack/main
+```
 
 Dentro del proyecto(frontend-fullstack) ejecutar: npm install
+
 Para la instalación de dependencias
 
-Usar el comando: npm run dev para inicializar el proyecto
+Usar el comando: 
+```console 
+npm run dev
+```
+para inicializar el proyecto
 
 Ingresar temporalmente con datos: 
 Usuario: admin
