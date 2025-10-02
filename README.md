@@ -8,7 +8,8 @@ git clone:
 https://github.com/SH4M1R/frontend-fullstack/main
 ```
 
-Dentro del proyecto(frontend-fullstack) ejecutar: ```console 
+Dentro del proyecto(frontend-fullstack) ejecutar: 
+```console 
 npm install
 ```
 
