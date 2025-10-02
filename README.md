@@ -8,7 +8,9 @@ git clone:
 https://github.com/SH4M1R/frontend-fullstack/main
 ```
 
-Dentro del proyecto(frontend-fullstack) ejecutar: npm install
+Dentro del proyecto(frontend-fullstack) ejecutar: ```console 
+npm install
+```
 
 Para la instalación de dependencias
 
