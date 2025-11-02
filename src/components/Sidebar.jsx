@@ -1,18 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
+  UserIcon,
+  PowerIcon,
   ChartBarIcon,
   CurrencyDollarIcon,
   ShoppingCartIcon,
-  ShoppingBagIcon,
-  Cog6ToothIcon,
   UserGroupIcon,
-  UserIcon,
   ClipboardDocumentListIcon,
-  TruckIcon,
-  ArrowTrendingUpIcon,
-  PowerIcon
-} from '@heroicons/react/24/outline';
+  Cog6ToothIcon,
+} from "@heroicons/react/24/outline";
+import { useAuth } from "../context/AuthContext";
 
 function Collapsible({ open, children }) {
   const ref = useRef(null);
@@ -20,22 +18,15 @@ function Collapsible({ open, children }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    if (open) {
-      const scrollH = el.scrollHeight;
-      el.style.maxHeight = `${scrollH}px`;
-    } else {
-      el.style.maxHeight = `0px`;
-    }
+    el.style.maxHeight = open ? `${el.scrollHeight}px` : "0px";
   }, [open]);
 
   return (
     <div
       ref={ref}
       className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-      aria-hidden={!open}
     >
-      <div className="opacity-100 transition-opacity duration-200 ease-in-out">
+      <div className="opacity-100 transition-opacity duration-300 ease-in-out">
         {children}
       </div>
     </div>
@@ -43,27 +34,30 @@ function Collapsible({ open, children }) {
 }
 
 export default function Sidebar() {
-  const nombre = localStorage.getItem("nombreUsuario") || "Invitado";
+  const { usuario, logout } = useAuth();
   const [openAdmin, setOpenAdmin] = useState(false);
-  const [openReportes, setOpenReportes] = useState(false);
+  const [openAnalisis, setOpenAnalisis] = useState(false);
 
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800 text-white shadow-xl flex flex-col justify-between">
-      {/* Título */}
-      <div className="p-5 border-b border-gray-700">
-        <h2 className="text-2xl font-bold text-center text-indigo-300 tracking-wide">
-          ModaStyle
-        </h2>
-        <p className="text-sm text-center text-indigo-500">YOURBRAND</p>
+      {/* Logo */}
+      <div className="p-5 border-b border-gray-700 flex flex-col items-center">
+        <div className="flex items-center justify-center mb-2">
+          <h2 className="text-xlindigo font-bold text-indigo-500 tracking-wide">
+            YOURBRAND - ModaStyle
+          </h2>
+        </div>
       </div>
 
       {/* Usuario */}
-      <div className="px-4 py-3 bg-gray-900 border-b border-gray-700 text-center">
-        <p className="text-sm font-medium flex justify-center items-center gap-1">
-          <UserIcon className="h-4 w-4 text-indigo-300" />
-          {nombre}
-        </p>
-      </div>
+      {usuario && (
+        <div className="px-4 py-3 bg-gray-900 border-b border-gray-700 text-center">
+          <p className="text-sm font-medium flex justify-center items-center gap-1">
+            <UserIcon className="h-4 w-4 text-indigo-400" />
+            {usuario.user} ({usuario.rol})
+          </p>
+        </div>
+      )}
 
       {/* Navegación */}
       <nav className="flex-1 px-4 py-4 overflow-y-auto space-y-2">
@@ -73,34 +67,31 @@ export default function Sidebar() {
 
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
         >
-          <ChartBarIcon className="h-5 w-5 text-indigo-300" />
+          <ChartBarIcon className="h-5 w-5 text-indigo-400" />
           <span>Dashboard</span>
         </Link>
 
-        <Link
-          to="/caja"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        <Link to="/arqueo-caja"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
         >
-          <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
-          <span>Caja</span>
+          <CurrencyDollarIcon className="h-5 w-5 text-indigo-400" />
+          <span>Arqueo de Caja</span>
         </Link>
 
-        <Link
-          to="/ventas"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        <Link to="/ventas"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
         >
-          <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
-          <span>Venta</span>
+          <ShoppingCartIcon className="h-5 w-5 text-indigo-400" />
+          <span>Ventas</span>
         </Link>
 
-        <Link
-          to="/compras"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 rounded-md transition-colors"
+        <Link to="/compras"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
         >
-          <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
-          <span>Compra</span>
+          <ShoppingCartIcon className="h-5 w-5 text-indigo-400" />
+          <span>Compras</span>
         </Link>
 
         {/* Administración */}
@@ -111,7 +102,7 @@ export default function Sidebar() {
             aria-expanded={openAdmin}
           >
             <div className="flex items-center gap-2">
-              <UserGroupIcon className="h-5 w-5 text-indigo-300" />
+              <UserGroupIcon className="h-5 w-5 text-indigo-400" />
               <span>Administración</span>
             </div>
             <span className="text-sm">{openAdmin ? "▲" : "▼"}</span>
@@ -120,94 +111,67 @@ export default function Sidebar() {
           <Collapsible open={openAdmin}>
             <div className="ml-4 mt-1 space-y-1 py-2">
               <Link
-                to="/gestionUsuarios"
+                to="/empleados"
                 className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
               >
-                <UserIcon className="h-5 w-5 text-indigo-300" />
-                <span>Gestión de Usuarios</span>
+                <UserIcon className="h-5 w-5 text-indigo-400" />
+                <span>Gestión de Empleados</span>
               </Link>
               <Link
-                to="/productos"
+                to="/Productos"
                 className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
               >
-                <ClipboardDocumentListIcon className="h-5 w-5 text-indigo-300" />
+                <ClipboardDocumentListIcon className="h-5 w-5 text-indigo-400" />
                 <span>Gestión de Productos</span>
               </Link>
-              <Link
-                to="/gestionProveedores"
-                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
-              >
-                <TruckIcon className="h-5 w-5 text-indigo-300" />
-                <span>Gestión de Proveedores</span>
-              </Link>
             </div>
           </Collapsible>
         </div>
 
-        {/* Reportes */}
+        {/* Análisis y Configuración */}
         <div>
           <button
-            onClick={() => setOpenReportes(!openReportes)}
+            onClick={() => setOpenAnalisis(!openAnalisis)}
             className="w-full text-left px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors flex justify-between items-center"
-            aria-expanded={openReportes}
+            aria-expanded={openAnalisis}
           >
             <div className="flex items-center gap-2">
-              <ArrowTrendingUpIcon className="h-5 w-5 text-indigo-300" />
-              <span>Reportes</span>
+              <ChartBarIcon className="h-5 w-5 text-indigo-400" />
+              <span>Análisis & Configuración</span>
             </div>
-            <span className="text-sm">{openReportes ? "▲" : "▼"}</span>
+            <span className="text-sm">{openAnalisis ? "▲" : "▼"}</span>
           </button>
 
-          <Collapsible open={openReportes}>
+          <Collapsible open={openAnalisis}>
             <div className="ml-4 mt-1 space-y-1 py-2">
               <Link
-                to="/reporte-ventas"
+                to="/reportes"
                 className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
               >
-                <ShoppingCartIcon className="h-5 w-5 text-indigo-300" />
-                <span>Reporte de Ventas</span>
+                <ChartBarIcon className="h-5 w-5 text-indigo-400" />
+                <span>Reportes</span>
               </Link>
               <Link
-                to="/reportes/compras"
+                to="/configuracion"
                 className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
               >
-                <ShoppingBagIcon className="h-5 w-5 text-indigo-300" />
-                <span>Reporte de Compras</span>
-              </Link>
-              <Link
-                to="/reportes/caja"
-                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
-              >
-                <CurrencyDollarIcon className="h-5 w-5 text-indigo-300" />
-                <span>Reporte de Caja</span>
+                <Cog6ToothIcon className="h-5 w-5 text-indigo-400" />
+                <span>Configuración</span>
               </Link>
             </div>
           </Collapsible>
         </div>
-
-        {/* Configuración */}
-        <Link
-          to="/configuracion"
-          className="flex items-center gap-2 px-4 py-2 mt-4 rounded-md hover:bg-indigo-700/40 transition-colors"
-        >
-          <Cog6ToothIcon className="h-5 w-5 text-indigo-300" />
-          <span>Configuración</span>
-        </Link>
       </nav>
 
-      {/* Footer */}
+      {/* Cerrar sesión */}
       <div className="p-4 border-t border-gray-700">
-        <Link
-          to="/login"
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 rounded-md hover:bg-red-500 transition-colors"
-          onClick={() => {
-            localStorage.removeItem("isAuthenticated");
-            localStorage.removeItem("nombreUsuario");
-          }}
+        <button
+          onClick={() => logout()}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-500 transition-colors w-full font-semibold"
         >
           <PowerIcon className="h-5 w-5 text-white" />
           <span>Cerrar Sesión</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );

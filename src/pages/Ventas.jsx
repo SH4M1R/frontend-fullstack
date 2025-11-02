@@ -55,7 +55,7 @@ export default function Ventas() {
       {/* Sección de productos */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">📦 Venta</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Ventas</h2>
         </div>
 
         {/* Buscador */}

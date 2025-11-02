@@ -1,80 +1,125 @@
-import React, { useState } from 'react';
-import { EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
-import { usuarios } from '../data/usuario';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const userFound = usuarios.find(
-      (user) => user.username === username && user.password === password
-    );
+    setError("");
 
-    if (userFound) {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('nombreUsuario', userFound.nombre);
-      navigate('/dashboard');
-    } else {
-      alert('Credenciales inválidas');
+    try {
+      const response = await fetch("http://localhost:8500/api/empleados/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, contrasena }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.message || "Usuario o contraseña incorrectos.");
+        return;
+      }
+
+      const data = await response.json();
+
+      login({
+        idEmpleado: data.idEmpleado,
+        username: data.username,
+        user: data.user,
+        rol: data.rol?.rol,
+      });
+
+      navigate("/dashboard");
+
+    } catch (err) {
+      console.error("Error de conexión:", err);
+      setError("No se pudo conectar con el servidor.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-200 px-4">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md space-y-6">
-        <div className="flex flex-col items-center">
-          <LockClosedIcon className="h-12 w-12 text-indigo-600" />
-          <h2 className="mt-2 text-2xl font-bold text-gray-800">Bienvenido</h2>
-          <p className="text-sm text-gray-500">Inicia sesión para continuar</p>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-tr from-white to-indigo-500">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div className="text-center mb-6">
+          <i className="bi bi-lock-fill text-indigo-600 text-5xl"></i>
+          <h3 className="mt-3 text-2xl font-bold text-gray-800">Bienvenido</h3>
+          <p className="text-gray-500 text-sm">Inicia sesión para continuar</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Usuario */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Usuario</label>
-            <input
-              type="text"
-              placeholder="Ingresa tu usuario"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Usuario</label>
+            <div className="flex items-center border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400">
+              <span className="px-3 bg-gray-100 text-gray-500">
+                <i className="bi bi-person-fill"></i>
+              </span>
+              <input
+                type="text"
+                className="w-full px-3 py-2 outline-none text-gray-700"
+                placeholder="Ingresa tu usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
+          {/* Contraseña */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-            <div className="relative mt-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
+            <div className="flex items-center border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400">
+              <span className="px-3 bg-gray-100 text-gray-500">
+                <i className="bi bi-key-fill"></i>
+              </span>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
+                className="w-full px-3 py-2 outline-none text-gray-700"
                 placeholder="Ingresa tu contraseña"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                required
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-3 flex items-center"
+                className="px-3 text-gray-500 hover:text-gray-700 transition"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-400" />
-                )}
+                <i className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i>
               </button>
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-200"
-          >
-            Iniciar sesión
-          </button>
+          {/* Datos de prueba */}
+          <div className="text-xs text-gray-500 mt-2">
+            <p>DATOS DE LA BD PARA INICIAR SESIÓN:</p>
+            <p>usuario: <span className="font-semibold">admin</span> // contraseña: <span className="font-semibold">admin123</span></p>
+          </div>
+
+          {/* Botón */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+            >
+              <i className="bi bi-box-arrow-in-right"></i>
+              Iniciar sesión
+            </button>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mt-3 text-center bg-indigo-100 text-indigo-700 text-sm font-medium py-2 rounded-lg">
+              {error}
+            </div>
+          )}
         </form>
       </div>
     </div>

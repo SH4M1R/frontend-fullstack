@@ -163,7 +163,7 @@ export default function GestionUsuarios() {
     <div className="p-6">
       {/* Encabezado */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">👥 Gestión de Usuarios y Clientes</h2>
+        <h2 className="text-2xl font-bold"> Gestión de Usuarios y Clientes</h2>
         <button
           onClick={() => {
             setEditUsuarioIndex(null);
@@ -203,11 +203,11 @@ export default function GestionUsuarios() {
                     <button
                       onClick={() => editarUsuario(index)}
                       className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
-                    > ✏️ </button>
+                    > Editar </button>
                     <button
                       onClick={() => eliminarUsuario(index)}
                       className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                    > 🗑️ </button>
+                    > Eliminar </button>
                   </td>
                 </tr>
               ))

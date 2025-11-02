@@ -49,7 +49,7 @@ export default function GestionProveedores() {
     <div className="p-6">
       {/* Encabezado */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">🏢 Gestión de Proveedores</h2>
+        <h2 className="text-2xl font-bold">Gestión de Proveedores</h2>
         <BotonAgregarProveedor
           onProveedorAgregado={(nuevoProveedor) => {
             setProveedores([

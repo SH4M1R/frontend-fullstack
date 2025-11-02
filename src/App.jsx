@@ -1,14 +1,11 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import Productos from "./pages/Productos";
-import ReporteVentas from "./pages/ReporteVentas";
 import Ventas from "./pages/Ventas";
-import GestionUsuarios from "./pages/GestionUsuarios";
-import GestionProveedores from "./pages/GestionProveedores";
-import Configuracion from "./pages/Configuracion";
-
+import Empleados from "./pages/Empleados";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   const location = useLocation();
@@ -16,22 +13,24 @@ function App() {
 
   return (
     <div className="flex">
-      {/* Sidebar solo si no estamos en login */}
       {!isLoginPage && <Sidebar />}
 
-      <main className={`${!isLoginPage ? 'ml-60' : 'flex-1'} flex-1 p-6`}>
+      <main
+        className={`flex-1 transition-all duration-300 ${
+          isLoginPage ? "ml-0" : "ml-[250px]"
+        } p-4`}
+      >
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/productos" element={<Productos />} />
-          <Route path="/reporte-ventas" element={<ReporteVentas />} />
-          <Route path="/ventas" element={<Ventas />} />
-          <Route path="/gestionUsuarios" element={<GestionUsuarios />} />
-          <Route path="/gestionProveedores" element={<GestionProveedores />} />
-          <Route path="/configuracion" element={<Configuracion />} />
-            
 
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/empleados" element={<Empleados />} />
+            <Route path="/productos" element={<Productos />} />
+            <Route path="/ventas" element={<Ventas />} />
+          </Route>
+
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
     </div>
