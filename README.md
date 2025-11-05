@@ -2,7 +2,31 @@
 PROYECTO: PAGINA WEB VENTA DE ROPA
 Se agregará todo el apartado frontend del proyecto usando el framework de REACT
 =======
-# React + Vite
+# Instalación del proyecto
+git clone: 
+```console
+https://github.com/SH4M1R/frontend-fullstack/main
+```
+
+Dentro del proyecto(frontend-fullstack) ejecutar: 
+```console 
+npm install
+```
+
+Para la instalación de dependencias
+
+
+
+Usar el comando: 
+```console 
+npm run dev
+```
+para inicializar el proyecto
+
+Ingresar temporalmente con datos: 
+Usuario: admin
+Contraseña: password
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
