@@ -1,119 +1,84 @@
-import React, { useState, useEffect } from "react";
-import BotonAgregarProveedor from "../components/AddProveedor";
+import { useEffect, useState } from "react";
+import ModalProveedor from "../components/ModalProveedor";
 
 export default function GestionProveedores() {
   const [proveedores, setProveedores] = useState([]);
-  const [modalProveedorOpen, setModalProveedorOpen] = useState(false);
-  const [editProveedorIndex, setEditProveedorIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
+
+  const fetchProveedores = async () => {
+    const res = await fetch("http://localhost:8500/api/proveedores");
+    const data = await res.json();
+    setProveedores(data);
+  };
 
   useEffect(() => {
-    const storedProveedores = localStorage.getItem("proveedores");
-    if (storedProveedores) setProveedores(JSON.parse(storedProveedores));
+    fetchProveedores();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("proveedores", JSON.stringify(proveedores));
-  }, [proveedores]);
-
-  const guardarProveedor = (proveedor) => {
-    if (editProveedorIndex !== null) {
-      const actualizados = [...proveedores];
-      actualizados[editProveedorIndex] = {
-        ...proveedor,
-        id: proveedores[editProveedorIndex].id,
-      };
-      setProveedores(actualizados);
-      setEditProveedorIndex(null);
-    } else {
-      setProveedores([
-        ...proveedores,
-        { id: proveedores.length + 1, ...proveedor },
-      ]);
-    }
-    setModalProveedorOpen(false);
+  const handleAdd = () => {
+    setSelectedProveedor(null);
+    setIsModalOpen(true);
   };
 
-  const editarProveedor = (index) => {
-    setEditProveedorIndex(index);
-    setModalProveedorOpen(true);
+  const handleEdit = (proveedor) => {
+    setSelectedProveedor(proveedor);
+    setIsModalOpen(true);
   };
 
-  const eliminarProveedor = (index) => {
-    if (window.confirm("¿Seguro que deseas eliminar este proveedor?")) {
-      const actualizados = proveedores.filter((_, i) => i !== index);
-      setProveedores(actualizados);
-    }
+  const handleDelete = async (id) => {
+    await fetch(`http://localhost:8500/api/proveedores/${id}`, {
+      method: "DELETE",
+    });
+    fetchProveedores();
   };
 
   return (
     <div className="p-6">
-      {/* Encabezado */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Gestión de Proveedores</h2>
-        <BotonAgregarProveedor
-          onProveedorAgregado={(nuevoProveedor) => {
-            setProveedores([
-              ...proveedores,
-              { id: proveedores.length + 1, ...nuevoProveedor },
-            ]);
-          }}
-        />
+        <h1 className="text-2xl font-bold">Gestión de Proveedores</h1>
+        <button onClick={handleAdd}
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+        > Nuevo Proveedor
+        </button>
       </div>
 
-      {/* Tabla de proveedores */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300 text-sm">
-          <thead className="bg-gray-100 text-center">
-            <tr>
-              <th className="border px-2 py-2">ID</th>
-              <th className="border px-2 py-2">Nombre</th>
-              <th className="border px-2 py-2">Empresa</th>
-              <th className="border px-2 py-2">Email</th>
-              <th className="border px-2 py-2">Teléfono</th>
-              <th className="border px-2 py-2">Dirección</th>
-              <th className="border px-2 py-2">Acciones</th>
+      <table className="w-full border text-left text-sm">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2 border">ID</th>
+            <th className="p-2 border">Nombre</th>
+            <th className="p-2 border">Contacto</th>
+            <th className="p-2 border">Teléfono</th>
+            <th className="p-2 border">Dirección</th>
+            <th className="p-2 border">RUC</th>
+            <th className="p-2 border">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {proveedores.map((prov) => (
+            <tr key={prov.idProveedor}>
+              <td className="p-2 border">{prov.idProveedor}</td>
+              <td className="p-2 border">{prov.nombre}</td>
+              <td className="p-2 border">{prov.contacto}</td>
+              <td className="p-2 border">{prov.telefono}</td>
+              <td className="p-2 border">{prov.direccion}</td>
+              <td className="p-2 border">{prov.ruc}</td>
+              <td className="p-2 border flex gap-2">
+                <button onClick={() => handleEdit(prov)}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                > Editar </button>
+                <button onClick={() => handleDelete(prov.idProveedor)}
+                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                > Eliminar </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {proveedores.length > 0 ? (
-              proveedores.map((p, index) => (
-                <tr key={p.id} className="text-center hover:bg-gray-50">
-                  <td className="border px-2 py-2">{p.id}</td>
-                  <td className="border px-2 py-2">{p.nombre}</td>
-                  <td className="border px-2 py-2">{p.empresa}</td>
-                  <td className="border px-2 py-2">{p.email}</td>
-                  <td className="border px-2 py-2">{p.telefono || "—"}</td>
-                  <td className="border px-2 py-2">{p.direccion || "—"}</td>
-                  <td className="border px-2 py-2 space-x-2">
-                    <button
-                      onClick={() => editarProveedor(index)}
-                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-400"
-                    > ✏️ </button>
-                    <button
-                      onClick={() => eliminarProveedor(index)}
-                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                    > 🗑️ </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500">
-                  No hay proveedores registrados
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
 
-      {/* Modales de edición */}
-      {modalProveedorOpen && (
-        <ModalProveedor
-          onClose={() => setModalProveedorOpen(false)}
-          onSave={guardarProveedor}
-          initialData={editProveedorIndex !== null ? proveedores[editProveedorIndex] : null}
-        />
+      {isModalOpen && (
+        <ModalProveedor onClose={() => setIsModalOpen(false)} proveedor={selectedProveedor} refresh={fetchProveedores} />
       )}
     </div>
   );

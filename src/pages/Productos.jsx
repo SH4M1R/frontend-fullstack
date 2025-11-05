@@ -42,7 +42,7 @@ export default function Productos() {
       <div className="flex gap-3 mb-6">
         <button
           onClick={() => { setProductoEditar(null); setProductoOpen(true); }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-indi-700 transition"
         > Nuevo Producto </button>
 
         <button
