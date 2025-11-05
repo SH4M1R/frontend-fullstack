@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Productos from "./pages/Productos";
 import Ventas from "./pages/Ventas";
+import Proveedores from "./pages/GestionProveedores";
 import Empleados from "./pages/Empleados";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/empleados" element={<Empleados />} />
             <Route path="/productos" element={<Productos />} />
+            <Route path="/proveedores" element={<Proveedores />} />
             <Route path="/ventas" element={<Ventas />} />
           </Route>
 
