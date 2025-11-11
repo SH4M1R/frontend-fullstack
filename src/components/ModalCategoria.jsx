@@ -7,7 +7,7 @@ export default function ModalCategoria({ isOpen, onClose }) {
     await fetch("http://localhost:8500/api/categorias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ categoria })
+      body: JSON.stringify({ categoria }),
     });
     onClose();
   };
@@ -28,8 +28,15 @@ export default function ModalCategoria({ isOpen, onClose }) {
         />
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-          <button onClick={guardar} className="px-4 py-2 bg-green-600 text-white rounded">Guardar</button>
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+            Cancelar
+          </button>
+          <button
+            onClick={guardar}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            Guardar
+          </button>
         </div>
       </div>
     </div>

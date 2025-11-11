@@ -6,34 +6,58 @@ import Productos from "./pages/Productos";
 import Ventas from "./pages/Ventas";
 import Proveedores from "./pages/GestionProveedores";
 import Empleados from "./pages/Empleados";
+import Compras from "./pages/Compras";
+import CompraForm from "./pages/CompraForm";
 import PrivateRoute from "./components/PrivateRoute";
+import Configuracion from "./pages/Configuracion";
 
 function App() {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
 
+  console.log("📍 Current route:", location.pathname);
+  console.log("🔐 Is login page:", isLoginPage);
+
   return (
-    <div className="flex">
-      {!isLoginPage && <Sidebar />}
+    <div className="min-h-screen flex bg-gray-50">
+      {/* Sidebar */}
+      {!isLoginPage && (
+        <div className="fixed top-0 left-0 h-full z-50">
+          <Sidebar />
+        </div>
+      )}
 
+      {/* Main Content */}
       <main
-        className={`flex-1 transition-all duration-300 ${
-          isLoginPage ? "ml-0" : "ml-[250px]"
-        } p-4`}
+        className={`flex-1 min-h-screen transition-all duration-300 ${
+          isLoginPage ? "ml-0" : "ml-80"
+        }`}
       >
-        <Routes>
-          <Route path="/login" element={<Login />} />
+        <div className="w-full h-full">
+          <Routes>
+            {/* Public Route */}
+            <Route path="/login" element={<Login />} />
 
-          <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/empleados" element={<Empleados />} />
-            <Route path="/productos" element={<Productos />} />
-            <Route path="/proveedores" element={<Proveedores />} />
-            <Route path="/ventas" element={<Ventas />} />
-          </Route>
+            {/* Protected Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/empleados" element={<Empleados />} />
+              <Route path="/productos" element={<Productos />} />
+              <Route path="/proveedores" element={<Proveedores />} />
+              <Route path="/ventas" element={<Ventas />} />
+              <Route path="/compras" element={<Compras />} />
+              <Route path="/compras/crear" element={<CompraForm />} />
+              <Route path="/compras/editar/:id" element={<CompraForm />} />
+              <Route path="/configuracion" element={<Configuracion />} />
+            </Route>
 
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+            {/* Default Redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            
+            {/* Catch all - Redirección para rutas no encontradas */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </div>
       </main>
     </div>
   );

@@ -4,7 +4,12 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
   if (!show) return null;
 
   const isEditing = !!empleadoData;
-  const initialData = { user: "", username: "", contrasena: "", rol: { idRol: "" } };
+  const initialData = {
+    user: "",
+    username: "",
+    contrasena: "",
+    rol: { idRol: "" },
+  };
 
   const [data, setData] = useState(initialData);
   const [roles, setRoles] = useState([]);
@@ -76,7 +81,10 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error(`Error al ${isEditing ? "actualizar" : "crear"} empleado`);
+      if (!res.ok)
+        throw new Error(
+          `Error al ${isEditing ? "actualizar" : "crear"} empleado`
+        );
       onSave();
     } catch (err) {
       console.error(err);
@@ -140,13 +148,17 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
               value={data.contrasena}
               onChange={handleChange}
               required={!isEditing}
-              placeholder={isEditing ? "Dejar en blanco para mantener la actual" : ""}
+              placeholder={
+                isEditing ? "Dejar en blanco para mantener la actual" : ""
+              }
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Rol
+            </label>
             <select
               name="rolId"
               value={data.rol.idRol || ""}
@@ -178,7 +190,11 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
               disabled={loading || !data.rol.idRol}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              {loading ? "Guardando..." : isEditing ? "Guardar Cambios" : "Guardar"}
+              {loading
+                ? "Guardando..."
+                : isEditing
+                ? "Guardar Cambios"
+                : "Guardar"}
             </button>
           </div>
         </form>

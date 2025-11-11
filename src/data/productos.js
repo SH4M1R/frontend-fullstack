@@ -9,7 +9,7 @@ export const productos = [
     Color: "Azul",
     Foto: "https://www.joma.com.pe/wp-content/uploads/2025/03/CAMISETA-ECOCHAMPIONSHIP-NG-NG-F-1.jpg",
     Genero: true,
-    categoria: { idCategoria: 1, nombre: "Ropa" }
+    categoria: { idCategoria: 1, nombre: "Ropa" },
   },
   {
     idProducto: 2,
@@ -21,7 +21,7 @@ export const productos = [
     Color: "Negro",
     Foto: "https://media.falabella.com/falabellaPE/134098260_01/w=800,h=800,fit=pad",
     Genero: true,
-    categoria: { idCategoria: 2, nombre: "Calzado" }
+    categoria: { idCategoria: 2, nombre: "Calzado" },
   },
   {
     idProducto: 3,
@@ -33,7 +33,7 @@ export const productos = [
     Color: "Gris",
     Foto: "https://plazavea.vteximg.com.br/arquivos/ids/28853551-418-418/20371661.jpg",
     Genero: false,
-    categoria: { idCategoria: 1, nombre: "Ropa" }
+    categoria: { idCategoria: 1, nombre: "Ropa" },
   },
   {
     idProducto: 4,
@@ -45,7 +45,7 @@ export const productos = [
     Color: "Negro",
     Foto: "https://m.media-amazon.com/images/I/51IdUD6H59L._UY1000_.jpg",
     Genero: true,
-    categoria: { idCategoria: 1, nombre: "Ropa" }
+    categoria: { idCategoria: 1, nombre: "Ropa" },
   },
   {
     idProducto: 5,
@@ -57,6 +57,6 @@ export const productos = [
     Color: "Azul",
     Foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwqLZhn3hnRHNKboaz4otMvnYSlBWWY4CiSg&s",
     Genero: true,
-    categoria: { idCategoria: 3, nombre: "Accesorios" }
-  }
+    categoria: { idCategoria: 3, nombre: "Accesorios" },
+  },
 ];
