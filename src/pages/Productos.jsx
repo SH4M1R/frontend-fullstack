@@ -1,121 +1,196 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { PencilIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 import ModalProducto from "../components/ModalProducto";
 import ModalCategoria from "../components/ModalCategoria";
-import { PencilIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 
 export default function Productos() {
   const [productos, setProductos] = useState([]);
-  const [isProductoOpen, setProductoOpen] = useState(false);
-  const [isCategoriaOpen, setCategoriaOpen] = useState(false);
-  const [productoEditar, setProductoEditar] = useState(null);
-  const [pagina, setPagina] = useState(1);
-  const porPagina = 10;
+  const [busqueda, setBusqueda] = useState("");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarModalCategoria, setMostrarModalCategoria] = useState(false);
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
+  const productosPorPagina = 25;
+
+  // Cargar productos
   const cargarProductos = async () => {
-    const res = await fetch("http://localhost:8500/api/productos");
-    const data = await res.json();
-    setProductos(data);
+    try {
+      const response = await fetch("http://localhost:8500/api/productos");
+      const data = await response.json();
+      setProductos(data);
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
+    }
   };
 
   useEffect(() => {
     cargarProductos();
   }, []);
 
+  const productosFiltrados = productos.filter((p) =>
+    p.producto?.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  const indiceInicio = (paginaActual - 1) * productosPorPagina;
+  const productosPagina = productosFiltrados.slice(
+    indiceInicio,
+    indiceInicio + productosPorPagina
+  );
+
+  const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+
   const eliminarProducto = async (id) => {
-    if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
-    await fetch(`http://localhost:8500/api/productos/${id}`, { method: "DELETE" });
+    if (confirm("¿Seguro que deseas eliminar este producto?")) {
+      try {
+        await fetch(`http://localhost:8500/api/productos/${id}`, {
+          method: "DELETE",
+        });
+        cargarProductos();
+      } catch (error) {
+        console.error("Error al eliminar producto:", error);
+      }
+    }
+  };
+
+  const abrirModal = (producto = null) => {
+    setProductoSeleccionado(producto);
+    setMostrarModal(true);
+  };
+
+  const cerrarModal = () => {
+    setProductoSeleccionado(null);
+    setMostrarModal(false);
     cargarProductos();
   };
 
-  const cambiarEstado = async (p) => {
-    await fetch(`http://localhost:8500/api/productos/estado/${p.idProducto}`, { method: "PUT" });
+  const cerrarModalCategoria = () => {
+    setMostrarModalCategoria(false);
     cargarProductos();
   };
-
-  const productosPaginados = productos.slice((pagina - 1) * porPagina, pagina * porPagina);
-  const totalPaginas = Math.ceil(productos.length / porPagina);
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Gestión de Productos</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+        Gestión de Productos
+      </h1>
 
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={() => { setProductoEditar(null); setProductoOpen(true); }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-indi-700 transition"
-        > Nuevo Producto </button>
-
-        <button
-          onClick={() => setCategoriaOpen(true)}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
-        > Nueva Categoría </button>
+      {/* Buscador y botones */}
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Buscar producto..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          className="border border-gray-300 rounded-md px-3 py-2 w-1/3 focus:outline-none focus:ring focus:ring-indigo-200"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={() => setMostrarModalCategoria(true)}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md shadow"
+          >
+            + Categoría
+          </button>
+          <button
+            onClick={() => abrirModal()}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md shadow"
+          >
+            + Producto
+          </button>
+        </div>
       </div>
 
-      <div className="overflow-x-auto shadow rounded-lg">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100 text-gray-800 border">
+      {/* Tabla */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm text-left text-gray-700">
+            <thead className="bg-indigo-600 text-white">
             <tr>
-              {["ID","Producto","Categoría","Talla","Color","Género","P. Venta","Stock","Estado","Imagen","Acciones"]
-                .map(h => <th key={h} className="p-3 border font-medium">{h}</th>)}
+              <th className="p-2 border">ID</th>
+              <th className="p-2 border">Nombre</th>
+              <th className="p-2 border">Precio Compra</th>
+              <th className="p-2 border">Precio Venta</th>
+              <th className="p-2 border">Stock</th>
+              <th className="p-2 border">Talla</th>
+              <th className="p-2 border">Color</th>
+              <th className="p-2 border">Género</th>
+              <th className="p-2 border">Estado</th>
+              <th className="p-2 border">Categoría</th>
+              <th className="p-2 border">Imagen</th>
+              <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
-
           <tbody>
-            {productos.map((p) => (
-              <tr key={p.idProducto} className="hover:bg-gray-50 transition">
+            {productosPagina.map((p) => (
+              <tr key={p.idProducto} className="hover:bg-gray-50">
                 <td className="p-2 border text-center">{p.idProducto}</td>
                 <td className="p-2 border">{p.producto}</td>
-                <td className="p-2 border">{p.categoria?.categoria}</td>
-                <td className="p-2 border">{p.talla}</td>
-                <td className="p-2 border">{p.color}</td>
-                <td className="p-2 border">{p.genero ? "Masculino" : "Femenino"}</td>
-                <td className="p-2 border font-semibold">S/. {p.precioVenta}</td>
+                <td className="p-2 border text-center">{p.precioCompra}</td>
+                <td className="p-2 border text-center">{p.precioVenta}</td>
                 <td className="p-2 border text-center">{p.stock}</td>
-
+                <td className="p-2 border text-center">{p.talla}</td>
+                <td className="p-2 border text-center">{p.color}</td>
                 <td className="p-2 border text-center">
-                  <span className={`px-2 py-1 rounded text-white text-xs ${p.estado ? "bg-green-600" : "bg-red-600"}`}>
-                    {p.estado ? "Disponible" : "No Disponible"}
-                  </span>
+                  {p.genero ? "Masculino" : "Femenino"}
                 </td>
-
                 <td className="p-2 border text-center">
-                  {p.imagen && <img src={`http://localhost:8500${p.imagen}`} alt="" className="h-14 w-14 object-cover rounded" />}
+                  {p.estado ? "Activo" : "Inactivo"}
                 </td>
-
-                <td className="p-2 border flex gap-2 justify-center">
-                <button onClick={() => { setProductoEditar(p); setProductoOpen(true); }}>
-                  <PencilIcon className="h-5 text-blue-600 cursor-pointer" />
-                </button>
-
-                <button onClick={() => eliminarProducto(p.idProducto)}>
-                  <TrashIcon className="h-5 text-red-600 cursor-pointer" />
-                </button>
-
-                <button onClick={() => cambiarEstado(p.idProducto)}>
-                  <ArrowsRightLeftIcon className="h-5 text-yellow-600 cursor-pointer" />
-                </button>
-              </td>
+                <td className="p-2 border text-center">
+                  {p.categoria?.categoria}
+                </td>
+                <td className="p-2 border text-center">
+                  {p.imagen ? (
+                    <img
+                      src={`http://localhost:8500/upload/${p.imagen}`}
+                      alt="imagen"
+                      className="w-12 h-12 object-cover rounded mx-auto"
+                    />
+                  ) : (
+                    "Sin imagen"
+                  )}
+                </td>
+                <td className="p-2 border text-center space-x-2">
+                  <button onClick={() => abrirModal(p)}>
+                    <PencilIcon className="h-5 text-indigo-600 cursor-pointer" />
+                  </button>
+                  <button onClick={() => eliminarProducto(p.idProducto)}>
+                    <TrashIcon className="h-5 text-red-600 cursor-pointer" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
-        </table>   
+        </table>
       </div>
 
-      {/* PAGINACIÓN */}
-      <div className="flex justify-center mt-4 gap-2">
-        {[...Array(totalPaginas)].map((_, i) => (
+      {/* Paginación */}
+      <div className="flex justify-center mt-4 space-x-2">
+        {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
           <button
-            key={i}
-            onClick={() => setPagina(i + 1)}
-            className={`px-3 py-1 border rounded ${pagina === i + 1 ? "bg-indigo-600 text-white" : "bg-white"}`}
+            key={num}
+            onClick={() => setPaginaActual(num)}
+            className={`px-3 py-1 rounded-md ${
+              paginaActual === num
+                ? "bg-indigo-500 text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
           >
-            {i + 1}
+            {num}
           </button>
         ))}
-      </div>   
-      <ModalProducto isOpen={isProductoOpen} onClose={() => { setProductoOpen(false); cargarProductos(); }} productoEditar={productoEditar} />
+      </div>
 
-      <ModalCategoria isOpen={isCategoriaOpen} onClose={() => setCategoriaOpen(false)} />
+      {/* Modales */}
+      {mostrarModal && (
+        <ModalProducto
+          producto={productoSeleccionado}
+          onClose={cerrarModal}
+        />
+      )}
+
+      {mostrarModalCategoria && (
+        <ModalCategoria onClose={cerrarModalCategoria} />
+      )}
     </div>
   );
 }
