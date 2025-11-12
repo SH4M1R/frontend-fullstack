@@ -1,15 +1,40 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function ModalCategoria({ isOpen, onClose }) {
+  const { authFetch } = useAuth();
+  const BASE_URL = "http://localhost:8500/api";
+
   const [categoria, setCategoria] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const guardar = async () => {
-    await fetch("http://localhost:8500/api/categorias", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ categoria })
-    });
-    onClose();
+    if (!categoria.trim()) {
+      setError("El nombre de la categoría es obligatorio.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await authFetch(`${BASE_URL}/categorias`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categoria }),
+      });
+
+      if (!res.ok) throw new Error("Error al guardar la categoría");
+
+      onClose();
+      setCategoria("");
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;

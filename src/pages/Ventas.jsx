@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from "react";
 import MetodoPago from "../components/MetodoPago";
-import {
-  ShoppingCartIcon,
-  ShoppingBagIcon,
-  MagnifyingGlassIcon,
-  CreditCardIcon
-} from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, ShoppingBagIcon, MagnifyingGlassIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import { useAuth } from "../context/AuthContext";
 
 export default function Ventas() {
   const [busqueda, setBusqueda] = useState("");
   const [carrito, setCarrito] = useState([]);
   const [modalPagoOpen, setModalPagoOpen] = useState(false);
-
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const cargarData = async () => {
-      const resProductos = await fetch("http://localhost:8500/api/productos");
-      const dataProductos = await resProductos.json();
-
-      const resCategorias = await fetch("http://localhost:8500/api/categorias");
-      const dataCategorias = await resCategorias.json();
-
-      setProductos(dataProductos);
-      setCategorias(dataCategorias);
+      setLoading(true);
+      try {
+        const [resProductos, resCategorias] = await Promise.all([
+          authFetch("http://localhost:8500/api/productos"),
+          authFetch("http://localhost:8500/api/categorias"),
+        ]);
+        const dataProductos = await resProductos.json();
+        const dataCategorias = await resCategorias.json();
+        setProductos(dataProductos);
+        setCategorias(dataCategorias);
+      } catch (err) {
+        console.error("Error cargando productos o categorías:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     cargarData();
   }, []);
@@ -48,10 +52,7 @@ export default function Ventas() {
     }
   };
 
-  const total = carrito.reduce(
-    (acc, item) => acc + item.precioVenta * item.cantidad,
-    0
-  );
+  const total = carrito.reduce((acc, item) => acc + item.precioVenta * item.cantidad, 0);
 
   return (
     <div className="flex h-screen bg-gray-50">

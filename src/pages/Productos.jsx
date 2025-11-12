@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalProducto from "../components/ModalProducto";
 import ModalCategoria from "../components/ModalCategoria";
 import { PencilIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../context/AuthContext";
 
 export default function Productos() {
   const [productos, setProductos] = useState([]);
@@ -9,12 +10,26 @@ export default function Productos() {
   const [isCategoriaOpen, setCategoriaOpen] = useState(false);
   const [productoEditar, setProductoEditar] = useState(null);
   const [pagina, setPagina] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { authFetch } = useAuth();
+
   const porPagina = 10;
 
   const cargarProductos = async () => {
-    const res = await fetch("http://localhost:8500/api/productos");
-    const data = await res.json();
-    setProductos(data);
+    setLoading(true);
+    try {
+      const res = await authFetch("http://localhost:8500/api/productos");
+      if (!res.ok) throw new Error("Error al obtener productos");
+      const data = await res.json();
+      setProductos(data);
+      setError("");
+    } catch (err) {
+      console.error("Error al cargar productos:", err);
+      setError("No se pudo obtener la lista de productos.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -23,13 +38,27 @@ export default function Productos() {
 
   const eliminarProducto = async (id) => {
     if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
-    await fetch(`http://localhost:8500/api/productos/${id}`, { method: "DELETE" });
-    cargarProductos();
+    try {
+      const res = await authFetch(`http://localhost:8500/api/productos/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al eliminar producto");
+      cargarProductos();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo eliminar el producto.");
+    }
   };
 
   const cambiarEstado = async (p) => {
-    await fetch(`http://localhost:8500/api/productos/estado/${p.idProducto}`, { method: "PUT" });
-    cargarProductos();
+    try {
+      const res = await authFetch(`http://localhost:8500/api/productos/estado/${p.idProducto}`, {
+        method: "PUT",
+      });
+      if (!res.ok) throw new Error("Error al cambiar estado del producto");
+      cargarProductos();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo cambiar el estado del producto.");
+    }
   };
 
   const productosPaginados = productos.slice((pagina - 1) * porPagina, pagina * porPagina);

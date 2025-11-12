@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function ModalProducto({ isOpen, onClose, productoEditar }) {
+  const { authFetch } = useAuth();
+  const BASE_URL = "http://localhost:8500/api";
+
   const [categorias, setCategorias] = useState([]);
   const [preview, setPreview] = useState(null);
+  const [imagen, setImagen] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [form, setForm] = useState({
     producto: "",
@@ -14,15 +21,26 @@ export default function ModalProducto({ isOpen, onClose, productoEditar }) {
     talla: "",
     color: "",
     genero: true,
-    categoria: null
+    categoria: null,
   });
 
-  const [imagen, setImagen] = useState(null);
-
+  // Cargar categorías y datos del producto (si se edita)
   useEffect(() => {
-    fetch("http://localhost:8500/api/categorias")
-      .then(res => res.json())
-      .then(setCategorias);
+    if (!isOpen) return;
+
+    const fetchCategorias = async () => {
+      try {
+        const res = await authFetch(`${BASE_URL}/categorias`);
+        if (!res.ok) throw new Error("Error al cargar categorías");
+        const data = await res.json();
+        setCategorias(data);
+      } catch (err) {
+        console.error(err);
+        setError("No se pudieron cargar las categorías.");
+      }
+    };
+
+    fetchCategorias();
 
     if (productoEditar) {
       setForm({
@@ -35,23 +53,66 @@ export default function ModalProducto({ isOpen, onClose, productoEditar }) {
         talla: productoEditar.talla,
         color: productoEditar.color,
         genero: productoEditar.genero,
-        categoria: { idCategoria: productoEditar.categoria?.idCategoria }
+        categoria: { idCategoria: productoEditar.categoria?.idCategoria },
       });
-      setPreview(`http://localhost:8500${productoEditar.imagen}`);
+      setPreview(`${BASE_URL}${productoEditar.imagen}`);
+    } else {
+      setForm({
+        producto: "",
+        precioCompra: "",
+        precioVenta: "",
+        descripcion: "",
+        estado: true,
+        stock: "",
+        talla: "",
+        color: "",
+        genero: true,
+        categoria: null,
+      });
+      setPreview(null);
     }
-  }, [productoEditar]);
+  }, [isOpen, productoEditar]);
 
+  // Manejo de cambios de campos
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (name === "categoria") {
+      setForm({ ...form, categoria: { idCategoria: parseInt(value) } });
+    } else if (type === "checkbox") {
+      setForm({ ...form, [name]: checked });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
+
+  // Guardar producto
   const guardar = async () => {
-    const formData = new FormData();
-    formData.append("producto", new Blob([JSON.stringify(form)], { type: "application/json" }));
-    if (imagen) formData.append("imagen", imagen);
+    setLoading(true);
+    setError(null);
 
-    await fetch(`http://localhost:8500/api/productos${productoEditar ? `/${productoEditar.idProducto}` : ""}`, {
-      method: productoEditar ? "PUT" : "POST",
-      body: formData
-    });
+    try {
+      const formData = new FormData();
+      formData.append("producto", new Blob([JSON.stringify(form)], { type: "application/json" }));
+      if (imagen) formData.append("imagen", imagen);
 
-    onClose();
+      const url = `${BASE_URL}/productos${productoEditar ? `/${productoEditar.idProducto}` : ""}`;
+      const method = productoEditar ? "PUT" : "POST";
+
+      const res = await authFetch(url, {
+        method,
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error(`Error al ${productoEditar ? "actualizar" : "crear"} el producto`);
+
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;

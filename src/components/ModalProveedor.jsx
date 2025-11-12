@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function ModalProveedor({ onClose, proveedor, refresh }) {
+    const { authFetch } = useAuth(); 
   const [form, setForm] = useState({
     nombre: "",
     contacto: "",
@@ -26,7 +28,7 @@ export default function ModalProveedor({ onClose, proveedor, refresh }) {
       ? `http://localhost:8500/api/proveedores/${proveedor.idProveedor}`
       : "http://localhost:8500/api/proveedores";
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
