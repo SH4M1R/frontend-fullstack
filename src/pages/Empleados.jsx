@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ModalEmpleado from "../components/ModalEmpleado";
+import { useAuth } from "../context/AuthContext";
 
 export default function Empleados() {
   const [empleados, setEmpleados] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     fetchEmpleados();
@@ -14,7 +16,8 @@ export default function Empleados() {
   const fetchEmpleados = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8500/api/empleados");
+      const res = await authFetch("http://localhost:8500/api/empleados"); 
+      if (!res.ok) throw new Error("Error al obtener empleados");
       const data = await res.json();
       setEmpleados(data);
     } catch (error) {
@@ -39,7 +42,7 @@ export default function Empleados() {
     if (!window.confirm(`¿Seguro de eliminar al empleado con ID ${idEmpleado}?`)) return;
 
     try {
-      const res = await fetch(`http://localhost:8500/api/empleados/${idEmpleado}`, {
+      const res = await authFetch(`http://localhost:8500/api/empleados/${idEmpleado}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Error al eliminar");
@@ -49,6 +52,7 @@ export default function Empleados() {
       alert("Fallo al eliminar el empleado.");
     }
   };
+
 
   return (
     <div className="p-6">

@@ -7,6 +7,7 @@ import Ventas from "./pages/Ventas";
 import Proveedores from "./pages/GestionProveedores";
 import Empleados from "./pages/Empleados";
 import PrivateRoute from "./components/PrivateRoute";
+import Reportes from "./pages/Reportes";
 
 function App() {
   const location = useLocation();
@@ -26,6 +27,7 @@ function App() {
 
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/reportes" element={<Reportes />} />
             <Route path="/empleados" element={<Empleados />} />
             <Route path="/productos" element={<Productos />} />
             <Route path="/proveedores" element={<Proveedores />} />

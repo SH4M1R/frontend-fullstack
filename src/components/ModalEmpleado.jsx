@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
+  const { authFetch } = useAuth(); 
   if (!show) return null;
 
   const isEditing = !!empleadoData;
@@ -32,7 +34,7 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
 
   const fetchRoles = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/roles`);
+      const res = await authFetch(`${BASE_URL}/roles`);
       if (!res.ok) throw new Error("Error al cargar roles");
       const list = await res.json();
       setRoles(list);
@@ -67,15 +69,14 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
     const url = isEditing
       ? `${BASE_URL}/empleados/${empleadoData.idEmpleado}`
       : `${BASE_URL}/empleados`;
-
     const method = isEditing ? "PUT" : "POST";
 
     try {
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+
       if (!res.ok) throw new Error(`Error al ${isEditing ? "actualizar" : "crear"} empleado`);
       onSave();
     } catch (err) {
@@ -85,7 +86,6 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
       setLoading(false);
     }
   };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">

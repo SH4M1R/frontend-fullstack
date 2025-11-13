@@ -11,38 +11,37 @@ export default function Login() {
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    try {
-      const response = await fetch("http://localhost:8500/api/empleados/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, contrasena }),
-      });
+  try {
+    const response = await fetch("http://localhost:8500/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, contrasena }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        setError(errorData.message || "Usuario o contraseña incorrectos.");
-        return;
-      }
-
-      const data = await response.json();
-
-      login({
-        idEmpleado: data.idEmpleado,
-        username: data.username,
-        user: data.user,
-        rol: data.rol?.rol,
-      });
-
-      navigate("/dashboard");
-
-    } catch (err) {
-      console.error("Error de conexión:", err);
-      setError("No se pudo conectar con el servidor.");
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      setError(errorData.message || "Usuario o contraseña incorrectos.");
+      return;
     }
-  };
+
+    const data = await response.json();
+
+    login({
+      token: data.token,
+      idEmpleado: data.idEmpleado,
+      username: data.username,
+      rol: data.rol,
+    });
+
+    navigate("/dashboard");
+  } catch (err) {
+    console.error("Error de conexión:", err);
+    setError("No se pudo conectar con el servidor.");
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-tr from-white to-indigo-500">
