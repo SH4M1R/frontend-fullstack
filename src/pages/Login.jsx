@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
-  const [contrasena, setContrasena] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -18,7 +18,10 @@ export default function Login() {
     const response = await fetch("http://localhost:8500/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, contrasena }),
+      body: JSON.stringify({
+        username,
+        password,
+      }),
     });
 
     if (!response.ok) {
@@ -82,8 +85,8 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 className="w-full px-3 py-2 outline-none text-gray-700"
                 placeholder="Ingresa tu contraseña"
-                value={contrasena}
-                onChange={(e) => setContrasena(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <button
@@ -119,6 +122,16 @@ export default function Login() {
               {error}
             </div>
           )}
+
+          {/* Sign Up Link */}
+          <div className="text-center mt-4">
+            <p className="text-gray-600 text-sm">
+              ¿No tienes una cuenta?{" "}
+              <Link to="/signup" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+                Regístrate aquí
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
