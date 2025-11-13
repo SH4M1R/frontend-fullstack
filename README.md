@@ -141,9 +141,11 @@ El frontend se comunica con el backend (Spring Boot) a través de peticiones HTT
 
 ---
 
-## 📜 Licencia
+## Video explicativo
 
-Este proyecto es de uso educativo y puede ser modificado libremente con fines académicos o de práctica.
+Link del video:
+
+https://youtu.be/0xc_w_y50wQ
 
 ---
 
