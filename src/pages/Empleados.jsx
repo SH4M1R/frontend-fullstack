@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ModalEmpleado from "../components/ModalEmpleado";
 import { useAuth } from "../context/AuthContext";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 
 export default function Empleados() {
   const [empleados, setEmpleados] = useState([]);
@@ -59,13 +60,10 @@ export default function Empleados() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-2xl font-bold text-gray-800">Gestión de Empleados</h3>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition"
-        >
+        <button onClick={() => handleOpenModal()}
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition">
           <i className="bi bi-person-plus-fill text-lg"></i>
-          Agregar Empleado
-        </button>
+          Agregar Empleado</button>
       </div>
 
       {/* Tabla */}
@@ -86,30 +84,21 @@ export default function Empleados() {
             <tbody>
               {empleados.length > 0 ? (
                 empleados.map((emp) => (
-                  <tr
-                    key={emp.idEmpleado}
-                    className="border-b hover:bg-gray-50 transition"
-                  >
+                  <tr key={emp.idEmpleado} className="border-b hover:bg-gray-50 transition">
                     <td className="px-4 py-3">{emp.idEmpleado}</td>
                     <td className="px-4 py-3">{emp.user}</td>
                     <td className="px-4 py-3">{emp.username}</td>
                     <td className="px-4 py-3">{emp.rol?.rol}</td>
                     <td className="px-4 py-3 text-center flex justify-center gap-2">
                       {/* Botón Editar */}
-                      <button
-                        onClick={() => handleOpenModal(emp)}
-                        className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-md shadow transition"
-                        title="Editar empleado"
-                      > Editar
+                      <button onClick={() => handleOpenModal(emp)} title="Editar empleado">
+                      <PencilIcon className="h-5 w-5 text-indigo-600" />
                         <i className="bi bi-pencil-square"></i>
                       </button>
 
                       {/* Botón Eliminar */}
-                      <button
-                        onClick={() => handleDelete(emp.idEmpleado)}
-                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow transition"
-                        title="Eliminar empleado"
-                      > Eliminar
+                      <button onClick={() => handleDelete(emp.idEmpleado)} title="Eliminar empleado">
+                        <Trash2Icon className="h-5 w-5 text-red-600" />
                         <i className="bi bi-trash-fill"></i>
                       </button>
                     </td>
@@ -117,9 +106,7 @@ export default function Empleados() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center py-4 text-gray-500">
-                    No hay empleados registrados.
-                  </td>
+                  <td colSpan="5" className="text-center py-4 text-gray-500">No hay empleados registrados.</td>
                 </tr>
               )}
             </tbody>
@@ -129,12 +116,8 @@ export default function Empleados() {
 
       {/* Modal */}
       {showModal && (
-        <ModalEmpleado
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveSuccess}
-          empleadoData={empleadoToEdit}
-        />
+        <ModalEmpleado show={showModal} onClose={() => setShowModal(false)}
+          onSave={handleSaveSuccess} empleadoData={empleadoToEdit}/>
       )}
     </div>
   );
