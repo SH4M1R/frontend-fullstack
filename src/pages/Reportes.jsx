@@ -1,177 +1,155 @@
 import React, { useEffect, useState } from "react";
-import { EyeIcon } from "@heroicons/react/24/solid";
+import { DocumentTextIcon, EyeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Reportes() {
   const [ventas, setVentas] = useState([]);
-  const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8500/api/ventas/listar")
-      .then((res) => res.json())
-      .then((data) => setVentas(data))
-      .catch((err) => console.error("Error al obtener ventas:", err));
+      .then((res) => {
+        if (!res.ok) throw new Error("Error en la respuesta del servidor");
+        return res.json();
+      })
+      .then((data) => {
+        setVentas(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error al obtener ventas:", err);
+        setError("No se pudo obtener las ventas. Revisa si el backend está corriendo.");
+        setVentas([]);
+        setLoading(false);
+      });
   }, []);
 
-  const verDetalle = async (idVenta) => {
-    try {
-      const res = await fetch(`http://localhost:8500/api/ventas/${idVenta}`);
-      const data = await res.json();
-      setVentaSeleccionada(data);
-      setMostrarModal(true);
-    } catch (error) {
-      console.error("Error al obtener detalle de venta:", error);
-    }
+  const abrirModal = (venta) => {
+    setDetalleSeleccionado(venta);
+    setModalOpen(true);
   };
+
+  const cerrarModal = () => {
+    setDetalleSeleccionado(null);
+    setModalOpen(false);
+  };
+
+  const verBoleta = (idVenta) => {
+    const url = `http://localhost:8500/api/ventas/${idVenta}/boleta`;
+    window.open(url, "_blank");
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-indigo-600 text-lg font-semibold">Cargando ventas...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg font-semibold">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold text-indigo-700 mb-4">
-        Reporte de Ventas
-      </h1>
+      <h2 className="text-2xl font-bold text-indigo-600 mb-6">Reporte de Ventas</h2>
 
-      <div className="overflow-x-auto bg-white rounded-2xl shadow-md">
-        <table className="min-w-full text-sm text-left border-collapse">
-          <thead className="bg-indigo-600 text-white">
-            <tr>
-              <th className="py-3 px-4">ID</th>
-              <th className="py-3 px-4">Cliente</th>
-              <th className="py-3 px-4">Fecha</th>
-              <th className="py-3 px-4">Total (S/)</th>
-              <th className="py-3 px-4 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ventas.length > 0 ? (
-              ventas.map((venta) => (
-                <tr
-                  key={venta.idVenta}
-                  className="border-b hover:bg-gray-100 transition"
-                >
-                  <td className="py-2 px-4">{venta.idVenta}</td>
-                  <td className="py-2 px-4">
-                    {venta.cliente?.nombre || "CLIENTE VARIOS"}
-                  </td>
-                  <td className="py-2 px-4">
-                    {new Date(venta.fechaVenta).toLocaleString()}
-                  </td>
-                  <td className="py-2 px-4 font-semibold text-purple-700">
-                    S/ {venta.total.toFixed(2)}
-                  </td>
-                  <td className="py-2 px-4 text-center">
+      {ventas.length === 0 ? (
+        <p className="text-gray-700">No hay ventas registradas</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg">
+            <thead className="bg-indigo-600 text-white">
+              <tr>
+                <th className="py-2 px-3 text-left">ID</th>
+                <th className="py-2 px-3 text-left">Cliente</th>
+                <th className="py-2 px-3 text-left">Fecha</th>
+                <th className="py-2 px-3 text-right">Total</th>
+                <th className="py-2 px-3 text-center">Detalles</th>
+                <th className="py-2 px-3 text-center">Boleta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ventas.map((venta) => (
+                <tr key={venta.idVenta} className="border-b border-gray-200 hover:bg-gray-100">
+                  <td className="py-2 px-3">{venta.idVenta}</td>
+                  <td className="py-2 px-3">{venta.clienteNombre}</td>
+                  <td className="py-2 px-3">{new Date(venta.fechaVenta).toLocaleString()}</td>
+                  <td className="py-2 px-3 text-right font-semibold">S/ {venta.total.toFixed(2)}</td>
+                  <td className="py-2 px-3 text-center">
                     <button
-                      onClick={() => verDetalle(venta.idVenta)}
-                      className="bg-indigo-600 text-white px-3 py-1 rounded-lg flex items-center gap-1 mx-auto hover:bg-indigo-700 transition"
+                      onClick={() => abrirModal(venta)}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded flex items-center justify-center mx-auto"
                     >
-                      <EyeIcon className="w-4 h-4" />
-                      Ver Detalle
+                      <EyeIcon className="h-5 w-5 mr-1" />
+                      Ver
+                    </button>
+                  </td>
+                  <td className="py-2 px-3 text-center">
+                    <button
+                      onClick={() => verBoleta(venta.idVenta)}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded flex items-center justify-center mx-auto"
+                    >
+                      <DocumentTextIcon className="h-5 w-5 mr-1" />
+                      Boleta
                     </button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="5"
-                  className="text-center text-gray-500 py-4 italic"
-                >
-                  No hay ventas registradas.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {/* Modal de Detalle */}
-      {mostrarModal && ventaSeleccionada && (
+      {/* Modal de detalles */}
+      {modalOpen && detalleSeleccionado && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-6 relative">
-            <h2 className="text-xl font-bold text-purple-700 mb-3">
-              Detalle de Venta #{ventaSeleccionada.idVenta}
-            </h2>
+          <div className="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative">
             <button
-              onClick={() => setMostrarModal(false)}
-              className="absolute top-2 right-3 text-gray-500 hover:text-red-600 font-bold text-lg"
+              onClick={cerrarModal}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
             >
-              ✕
+              <XMarkIcon className="h-6 w-6" />
             </button>
-
-            {/* Datos generales */}
-            <div className="mb-4 border-b pb-3">
-              <p>
-                <strong>Cliente:</strong>{" "}
-                {ventaSeleccionada.cliente?.nombre || "CLIENTE VARIOS"}
-              </p>
-              <p>
-                <strong>Documento:</strong>{" "}
-                {ventaSeleccionada.cliente?.documento || "—"}
-              </p>
-              <p>
-                <strong>Fecha:</strong>{" "}
-                {new Date(ventaSeleccionada.fechaVenta).toLocaleString()}
-              </p>
-              <p>
-                <strong>Total:</strong>{" "}
-                <span className="text-purple-700 font-semibold">
-                  S/ {ventaSeleccionada.total.toFixed(2)}
-                </span>
-              </p>
-            </div>
-
-            {/* Detalle de productos */}
-            <h3 className="text-lg font-semibold mb-2">Productos Vendidos</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse mb-3">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="py-2 px-3">Producto</th>
-                    <th className="py-2 px-3">Cantidad</th>
-                    <th className="py-2 px-3">Precio (S/)</th>
-                    <th className="py-2 px-3">Subtotal (S/)</th>
+            <h3 className="text-xl font-bold text-indigo-600 mb-4">Detalles de la Venta #{detalleSeleccionado.idVenta}</h3>
+            <p className="mb-4">
+              Cliente: <b>{detalleSeleccionado.clienteNombre}</b> <br />
+              DNI: {detalleSeleccionado.clienteDocumento} <br />
+              Fecha: {new Date(detalleSeleccionado.fechaVenta).toLocaleString()}
+            </p>
+            <table className="min-w-full border border-gray-300 rounded">
+              <thead className="bg-indigo-100">
+                <tr>
+                  <th className="py-2 px-3 text-left text-sm">Producto</th>
+                  <th className="py-2 px-3 text-center text-sm">Cantidad</th>
+                  <th className="py-2 px-3 text-right text-sm">Precio</th>
+                  <th className="py-2 px-3 text-right text-sm">Subtotal</th>
+                  <th className="py-2 px-3 text-left text-sm">Pago</th>
+                  <th className="py-2 px-3 text-right text-sm">Monto</th>
+                  <th className="py-2 px-3 text-right text-sm">Vuelto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {detalleSeleccionado.detalles.map((det, index) => (
+                  <tr key={index} className="border-b border-gray-200">
+                    <td className="py-1 px-2 text-sm">{det.productoNombre}</td>
+                    <td className="py-1 px-2 text-center text-sm">{det.cantidad}</td>
+                    <td className="py-1 px-2 text-right text-sm">S/ {det.precio.toFixed(2)}</td>
+                    <td className="py-1 px-2 text-right text-sm">S/ {det.subtotal.toFixed(2)}</td>
+                    <td className="py-1 px-2 text-sm">{det.metodoPago}</td>
+                    <td className="py-1 px-2 text-right text-sm">S/ {det.montoPagado?.toFixed(2) || 0}</td>
+                    <td className="py-1 px-2 text-right text-sm">S/ {det.vuelto?.toFixed(2) || 0}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {ventaSeleccionada.detalleVenta?.map((d, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2 px-3">{d.producto?.nombre}</td>
-                      <td className="py-2 px-3 text-center">{d.stock}</td>
-                      <td className="py-2 px-3 text-center">
-                        S/ {d.producto?.precio.toFixed(2)}
-                      </td>
-                      <td className="py-2 px-3 text-right">
-                        S/ {d.subtotal.toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Método de pago */}
-            <div className="mt-3 border-t pt-3">
-              <p>
-                <strong>Método de Pago:</strong>{" "}
-                {ventaSeleccionada.detalleVenta?.[0]?.metodoPago || "No especificado"}
-              </p>
-              <p>
-                <strong>Monto Pagado:</strong> S/{" "}
-                {ventaSeleccionada.detalleVenta?.[0]?.montoPagado?.toFixed(2) || "0.00"}
-              </p>
-              <p>
-                <strong>Vuelto:</strong> S/{" "}
-                {ventaSeleccionada.detalleVenta?.[0]?.vuelto?.toFixed(2) || "0.00"}
-              </p>
-            </div>
-
-            <div className="mt-5 flex justify-end">
-              <button
-                onClick={() => setMostrarModal(false)}
-                className="bg-indigo-700 text-white px-5 py-2 rounded-lg hover:bg-indigo-800 transition"
-              >
-                Cerrar
-              </button>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
