@@ -73,27 +73,12 @@ export default function Sidebar() {
           <span>Dashboard</span>
         </Link>
 
-        <Link to="/arqueo-caja"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
-        >
-          <CurrencyDollarIcon className="h-5 w-5 text-indigo-400" />
-          <span>Arqueo de Caja</span>
-        </Link>
-
         <Link to="/ventas"
           className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
         >
           <ShoppingCartIcon className="h-5 w-5 text-indigo-400" />
           <span>Ventas</span>
         </Link>
-
-        <Link to="/compras"
-          className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700/40 rounded-md transition-colors"
-        >
-          <ShoppingCartIcon className="h-5 w-5 text-indigo-400" />
-          <span>Compras</span>
-        </Link>
-
         {/* Administración */}
         <div>
           <button
@@ -157,13 +142,6 @@ export default function Sidebar() {
               >
                 <ChartBarIcon className="h-5 w-5 text-indigo-400" />
                 <span>Reportes</span>
-              </Link>
-              <Link
-                to="/configuracion"
-                className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-indigo-700/40 transition-colors"
-              >
-                <Cog6ToothIcon className="h-5 w-5 text-indigo-400" />
-                <span>Configuración</span>
               </Link>
             </div>
           </Collapsible>

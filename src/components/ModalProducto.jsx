@@ -1,124 +1,166 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-export default function ModalProducto({ isOpen, onClose, productoEditar }) {
-  const [categorias, setCategorias] = useState([]);
-  const [preview, setPreview] = useState(null);
-
+export default function ModalProducto({ open, onClose, onSave, producto = null, categories = [] }) {
   const [form, setForm] = useState({
-    producto: "",
-    precioCompra: "",
-    precioVenta: "",
-    descripcion: "",
-    estado: true,
-    stock: "",
-    talla: "",
-    color: "",
+    idProducto: null,
+    producto: '',
+    precioCompra: '',
+    precioVenta: '',
+    stock: 0,
+    categoria: null,
+    descripcion: '',
+    talla: '',
+    color: '',
     genero: true,
-    categoria: null
+    estado: true,
   });
-
-  const [imagen, setImagen] = useState(null);
+  const [imagenFile, setImagenFile] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8500/api/categorias")
-      .then(res => res.json())
-      .then(setCategorias);
-
-    if (productoEditar) {
+    if (producto) {
       setForm({
-        producto: productoEditar.producto,
-        precioCompra: productoEditar.precioCompra,
-        precioVenta: productoEditar.precioVenta,
-        descripcion: productoEditar.descripcion,
-        estado: productoEditar.estado,
-        stock: productoEditar.stock,
-        talla: productoEditar.talla,
-        color: productoEditar.color,
-        genero: productoEditar.genero,
-        categoria: { idCategoria: productoEditar.categoria?.idCategoria }
+        idProducto: producto.idProducto,
+        producto: producto.producto || producto.Producto || '',
+        precioCompra: producto.precioCompra || producto.PrecioCompra || '',
+        precioVenta: producto.precioVenta || producto.PrecioVenta || '',
+        stock: producto.stock || 0,
+        categoria: producto.categoria || null,
+        descripcion: producto.descripcion || '',
+        talla: producto.talla || '',
+        color: producto.color || '',
+        genero: typeof producto.genero === 'boolean' ? producto.genero : true,
+        estado: typeof producto.estado === 'boolean' ? producto.estado : true,
       });
-      setPreview(`http://localhost:8500${productoEditar.imagen}`);
+      setImagenFile(null);
+    } else {
+      setForm({
+        idProducto: null,
+        producto: '',
+        precioCompra: '',
+        precioVenta: '',
+        stock: 0,
+        categoria: categories[0] || null,
+        descripcion: '',
+        talla: '',
+        color: '',
+        genero: true,
+        estado: true,
+      });
+      setImagenFile(null);
     }
-  }, [productoEditar]);
+  }, [producto, categories]);
 
-  const guardar = async () => {
-    const formData = new FormData();
-    formData.append("producto", new Blob([JSON.stringify(form)], { type: "application/json" }));
-    if (imagen) formData.append("imagen", imagen);
+  if (!open) return null;
 
-    await fetch(`http://localhost:8500/api/productos${productoEditar ? `/${productoEditar.idProducto}` : ""}`, {
-      method: productoEditar ? "PUT" : "POST",
-      body: formData
-    });
+  const handleChange = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
-    onClose();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      idProducto: form.idProducto,
+      producto: form.producto,
+      precioCompra: form.precioCompra === '' ? null : Number(form.precioCompra),
+      precioVenta: form.precioVenta === '' ? null : Number(form.precioVenta),
+      stock: Number(form.stock),
+      categoria: form.categoria,
+      descripcion: form.descripcion,
+      talla: form.talla,
+      color: form.color,
+      genero: !!form.genero,
+      estado: !!form.estado,
+    };
+
+    await onSave(payload, imagenFile);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
-        <h2 className="text-xl font-semibold mb-4">
-          {productoEditar ? "Editar Producto" : "Nuevo Producto"}
-        </h2>
-
-        <div className="grid grid-cols-2 gap-4">
-          <input className="border p-2" placeholder="Nombre"
-            value={form.producto}
-            onChange={(e) => setForm({ ...form, producto: e.target.value })} />
-
-          <input className="border p-2" type="number" placeholder="Precio Compra"
-            value={form.precioCompra}
-            onChange={(e) => setForm({ ...form, precioCompra: e.target.value })} />
-
-          <input className="border p-2" type="number" placeholder="Precio Venta"
-            value={form.precioVenta}
-            onChange={(e) => setForm({ ...form, precioVenta: e.target.value })} />
-
-          <input className="border p-2" type="number" placeholder="Stock"
-            value={form.stock}
-            onChange={(e) => setForm({ ...form, stock: e.target.value })} />
-
-          <input className="border p-2" placeholder="Talla"
-            value={form.talla}
-            onChange={(e) => setForm({ ...form, talla: e.target.value })} />
-
-          <input className="border p-2" placeholder="Color"
-            value={form.color}
-            onChange={(e) => setForm({ ...form, color: e.target.value })} />
-
-          <select className="border p-2"
-            value={form.genero ? "true" : "false"}
-            onChange={(e) => setForm({ ...form, genero: e.target.value === "true" })}>
-            <option value="true">Masculino</option>
-            <option value="false">Femenino</option>
-          </select>
-
-          <select className="border p-2"
-            value={form.categoria?.idCategoria || ""}
-            onChange={(e) => setForm({ ...form, categoria: { idCategoria: e.target.value } })}>
-            <option value="">Seleccione Categoría</option>
-            {categorias.map(c => <option key={c.idCategoria} value={c.idCategoria}>{c.categoria}</option>)}
-          </select>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-lg w-full max-w-2xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-indigo-700">{form.idProducto ? 'Editar Producto' : 'Agregar Producto'}</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cerrar</button>
         </div>
 
-        <textarea className="border p-2 w-full mt-3" rows="2" placeholder="Descripción"
-          value={form.descripcion}
-          onChange={(e) => setForm({ ...form, descripcion: e.target.value })} />
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm">Nombre</label>
+              <input required value={form.producto} onChange={e => handleChange('producto', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
 
-        <div className="mt-3">
-          <input type="file" onChange={(e) => { setImagen(e.target.files[0]); setPreview(URL.createObjectURL(e.target.files[0])); }} />
-        </div>
+            <div>
+              <label className="block text-sm">Categoría</label>
+              <select value={form.categoria?.idCategoria || ''} onChange={e => {
+                const found = categories.find(c => String(c.idCategoria) === String(e.target.value));
+                handleChange('categoria', found || null);
+              }} className="w-full border rounded px-2 py-1">
+                <option value="">-- Seleccionar --</option>
+                {categories.map(c => (
+                  <option key={c.idCategoria} value={c.idCategoria}>{c.categoria}</option>
+                ))}
+              </select>
+            </div>
 
-        {preview && <img src={preview} className="mt-3 h-32 object-cover rounded-md border" />}
+            <div>
+              <label className="block text-sm">Precio Compra</label>
+              <input type="number" step="0.01" value={form.precioCompra} onChange={e => handleChange('precioCompra', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
 
-        <div className="flex justify-end gap-2 mt-5">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-          <button onClick={guardar} className="px-4 py-2 bg-indigo-600 text-white rounded">
-            {productoEditar ? "Actualizar" : "Guardar"}
-          </button>
-        </div>
+            <div>
+              <label className="block text-sm">Precio Venta</label>
+              <input type="number" step="0.01" value={form.precioVenta} onChange={e => handleChange('precioVenta', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Stock</label>
+              <input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Talla</label>
+              <input value={form.talla} onChange={e => handleChange('talla', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Color</label>
+              <input value={form.color} onChange={e => handleChange('color', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Género</label>
+              <select value={form.genero ? 'M' : 'F'} onChange={e => handleChange('genero', e.target.value === 'M')} className="w-full border rounded px-2 py-1">
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm">Estado</label>
+              <select value={form.estado ? '1' : '0'} onChange={e => handleChange('estado', e.target.value === '1')} className="w-full border rounded px-2 py-1">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm">Descripción</label>
+            <textarea value={form.descripcion} onChange={e => handleChange('descripcion', e.target.value)} className="w-full border rounded px-2 py-1" rows={3}></textarea>
+          </div>
+
+          <div>
+            <label className="block text-sm">Imagen</label>
+            <input type="file" accept="image/*" onChange={e => setImagenFile(e.target.files?.[0] || null)} />
+            {producto?.imagen && (
+              <div className="mt-2 text-sm">Imagen actual: {producto.imagen}</div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end gap-3 mt-4">
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded">Cancelar</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded">Guardar</button>
+          </div>
+        </form>
       </div>
     </div>
   );
