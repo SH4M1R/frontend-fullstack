@@ -1,209 +1,164 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-export default function ModalProducto({ producto, onClose }) {
+export default function ModalProducto({ open, onClose, onSave, producto = null, categories = [] }) {
   const [form, setForm] = useState({
-    producto: "",
-    precioCompra: "",
-    precioVenta: "",
-    descripcion: "",
-    estado: true,
-    stock: "",
-    talla: "",
-    color: "",
+    idProducto: null,
+    producto: '',
+    precioCompra: '',
+    precioVenta: '',
+    stock: 0,
+    categoria: null,
+    descripcion: '',
+    talla: '',
+    color: '',
     genero: true,
-    categoria: "",
-    imagen: null,
+    estado: true,
   });
-
-  const [categorias, setCategorias] = useState([]);
-  const [preview, setPreview] = useState(null);
-
-  const cargarCategorias = async () => {
-    const res = await fetch("http://localhost:8500/api/categorias");
-    const data = await res.json();
-    setCategorias(data);
-  };
+  const [imagenFile, setImagenFile] = useState(null);
 
   useEffect(() => {
-    cargarCategorias();
     if (producto) {
       setForm({
-        producto: producto.producto || "",
-        precioCompra: producto.precioCompra || "",
-        precioVenta: producto.precioVenta || "",
-        descripcion: producto.descripcion || "",
-        estado: producto.estado ?? true,
-        stock: producto.stock || "",
-        talla: producto.talla || "",
-        color: producto.color || "",
-        genero: producto.genero ?? true,
-        categoria: producto.categoria?.idCategoria || "",
-        imagen: null,
+        idProducto: producto.idProducto,
+        producto: producto.producto || producto.Producto || '',
+        precioCompra: producto.precioCompra || producto.PrecioCompra || '',
+        precioVenta: producto.precioVenta || producto.PrecioVenta || '',
+        stock: producto.stock || 0,
+        categoria: producto.categoria || null,
+        descripcion: producto.descripcion || '',
+        talla: producto.talla || '',
+        color: producto.color || '',
+        genero: typeof producto.genero === 'boolean' ? producto.genero : true,
+        estado: typeof producto.estado === 'boolean' ? producto.estado : true,
       });
-      if (producto.imagen) {
-        setPreview(`http://localhost:8500/upload/${producto.imagen}`);
-      }
-    }
-  }, [producto]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === "checkbox") {
-      setForm({ ...form, [name]: checked });
-    } else if (files) {
-      const file = files[0];
-      setForm({ ...form, imagen: file });
-      setPreview(URL.createObjectURL(file));
+      setImagenFile(null);
     } else {
-      setForm({ ...form, [name]: value });
+      setForm({
+        idProducto: null,
+        producto: '',
+        precioCompra: '',
+        precioVenta: '',
+        stock: 0,
+        categoria: categories[0] || null,
+        descripcion: '',
+        talla: '',
+        color: '',
+        genero: true,
+        estado: true,
+      });
+      setImagenFile(null);
     }
-  };
+  }, [producto, categories]);
+
+  if (!open) return null;
+
+  const handleChange = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append(
-      "producto",
-      new Blob(
-        [
-          JSON.stringify({
-            producto: form.producto,
-            precioCompra: form.precioCompra,
-            precioVenta: form.precioVenta,
-            descripcion: form.descripcion,
-            estado: form.estado,
-            stock: form.stock,
-            talla: form.talla,
-            color: form.color,
-            genero: form.genero,
-            categoria: { idCategoria: form.categoria },
-          }),
-        ],
-        { type: "application/json" }
-      )
-    );
-    if (form.imagen) formData.append("imagen", form.imagen);
+    const payload = {
+      idProducto: form.idProducto,
+      producto: form.producto,
+      precioCompra: form.precioCompra === '' ? null : Number(form.precioCompra),
+      precioVenta: form.precioVenta === '' ? null : Number(form.precioVenta),
+      stock: Number(form.stock),
+      categoria: form.categoria,
+      descripcion: form.descripcion,
+      talla: form.talla,
+      color: form.color,
+      genero: !!form.genero,
+      estado: !!form.estado,
+    };
 
-    const method = producto ? "PUT" : "POST";
-    const url = producto
-      ? `http://localhost:8500/api/productos/${producto.idProducto}`
-      : `http://localhost:8500/api/productos`;
-
-    await fetch(url, { method, body: formData });
-    onClose();
+    await onSave(payload, imagenFile);
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-      <div className="bg-white rounded-lg shadow-lg w-3/5 p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">
-          {producto ? "Editar Producto" : "Nuevo Producto"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          <input
-            name="producto"
-            placeholder="Nombre del producto"
-            value={form.producto}
-            onChange={handleChange}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            name="precioCompra"
-            type="number"
-            placeholder="Precio de compra"
-            value={form.precioCompra}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          />
-          <input
-            name="precioVenta"
-            type="number"
-            placeholder="Precio de venta"
-            value={form.precioVenta}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          />
-          <input
-            name="stock"
-            type="number"
-            placeholder="Stock"
-            value={form.stock}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          />
-          <input
-            name="talla"
-            placeholder="Talla"
-            value={form.talla}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          />
-          <input
-            name="color"
-            placeholder="Color"
-            value={form.color}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          />
-          <textarea
-            name="descripcion"
-            placeholder="Descripción"
-            value={form.descripcion}
-            onChange={handleChange}
-            className="border p-2 rounded col-span-2"
-          ></textarea>
-
-          <select
-            name="categoria"
-            value={form.categoria}
-            onChange={handleChange}
-            className="border p-2 rounded col-span-2"
-            required
-          >
-            <option value="">Seleccionar categoría</option>
-            {categorias.map((c) => (
-              <option key={c.idCategoria} value={c.idCategoria}>
-                {c.categoria}
-              </option>
-            ))}
-          </select>
-
-          <div className="flex items-center space-x-2 col-span-2">
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" name="estado" checked={form.estado} onChange={handleChange} />
-              <span>Activo</span>
-            </label>
-          </div>
-          
-          <label className="block font-semibold">Género:
-            <select className="border p-2"
-            value={form.genero ? "true" : "false"}
-            onChange={(e) => setForm({ ...form, genero: e.target.value === "true" })}>
-            <option value="true">Masculino</option>
-            <option value="false">Femenino</option>
-          </select>
-          </label>
-
-          <div className="mt-3">
-          <input type="file" onChange={(e) => { setImagen(e.target.files[0]); setPreview(URL.createObjectURL(e.target.files[0])); }} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-lg w-full max-w-2xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-indigo-700">{form.idProducto ? 'Editar Producto' : 'Agregar Producto'}</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cerrar</button>
         </div>
 
-          <div className="col-span-2 flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded"
-            >
-              {producto ? "Guardar Cambios" : "Guardar"}
-            </button>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm">Nombre</label>
+              <input required value={form.producto} onChange={e => handleChange('producto', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Categoría</label>
+              <select value={form.categoria?.idCategoria || ''} onChange={e => {
+                const found = categories.find(c => String(c.idCategoria) === String(e.target.value));
+                handleChange('categoria', found || null);
+              }} className="w-full border rounded px-2 py-1">
+                <option value="">-- Seleccionar --</option>
+                {categories.map(c => (
+                  <option key={c.idCategoria} value={c.idCategoria}>{c.categoria}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm">Precio Compra</label>
+              <input type="number" step="0.01" value={form.precioCompra} onChange={e => handleChange('precioCompra', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Precio Venta</label>
+              <input type="number" step="0.01" value={form.precioVenta} onChange={e => handleChange('precioVenta', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Stock</label>
+              <input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Talla</label>
+              <input value={form.talla} onChange={e => handleChange('talla', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Color</label>
+              <input value={form.color} onChange={e => handleChange('color', e.target.value)} className="w-full border rounded px-2 py-1" />
+            </div>
+
+            <div>
+              <label className="block text-sm">Género</label>
+              <select value={form.genero ? 'M' : 'F'} onChange={e => handleChange('genero', e.target.value === 'M')} className="w-full border rounded px-2 py-1">
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm">Estado</label>
+              <select value={form.estado ? '1' : '0'} onChange={e => handleChange('estado', e.target.value === '1')} className="w-full border rounded px-2 py-1">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm">Descripción</label>
+            <textarea value={form.descripcion} onChange={e => handleChange('descripcion', e.target.value)} className="w-full border rounded px-2 py-1" rows={3}></textarea>
+          </div>
+
+          <div>
+            <label className="block text-sm">Imagen</label>
+            <input type="file" accept="image/*" onChange={e => setImagenFile(e.target.files?.[0] || null)} />
+            {producto?.imagen && (
+              <div className="mt-2 text-sm">Imagen actual: {producto.imagen}</div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end gap-3 mt-4">
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded">Cancelar</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded">Guardar</button>
           </div>
         </form>
       </div>

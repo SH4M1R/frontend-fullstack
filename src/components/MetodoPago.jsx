@@ -10,6 +10,7 @@ export default function MetodoPago({ metodo, setMetodo }) {
         {["efectivo", "yape", "izipay"].map((m) => (
           <button
             key={m}
+            type="button"
             onClick={() => setMetodo(m)}
             className={`px-3 py-1 rounded-lg text-sm capitalize ${
               metodo === m

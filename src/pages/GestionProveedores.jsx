@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ModalProveedor from "../components/ModalProveedor";
 import { useAuth } from "../context/AuthContext";
+import { PencilIcon, TrashIcon } from "lucide-react";
 
 export default function GestionProveedores() {
   const [proveedores, setProveedores] = useState([]);
@@ -58,13 +59,10 @@ export default function GestionProveedores() {
       {/* Encabezado */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-2xl font-bold text-gray-800">Gestión de Proveedores</h3>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition"
-        >
+        <button onClick={() => handleOpenModal()}
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition">
           <i className="bi bi-plus-circle-fill text-lg"></i>
-          Agregar Proveedor
-        </button>
+          Agregar Proveedor</button>
       </div>
 
       {/* Tabla */}
@@ -95,26 +93,14 @@ export default function GestionProveedores() {
                     <td className="px-4 py-3">{p.direccion}</td>
                     <td className="px-4 py-3">{p.ruc}</td>
                     <td className="px-4 py-3 text-center flex justify-center gap-2">
-                      <button
-                        onClick={() => handleOpenModal(p)}
-                        className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-md shadow transition"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(p.idProveedor)}
-                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow transition"
-                      >
-                        Eliminar
-                      </button>
+                      <button onClick={() => handleOpenModal(p)}><PencilIcon className="h-5 w-5 text-indigo-600" /></button>
+                      <button onClick={() => handleDelete(p.idProveedor)}><TrashIcon className="h-5 w-5 text-red-600" /></button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="text-center py-4 text-gray-500">
-                    No hay proveedores registrados.
-                  </td>
+                  <td colSpan="7" className="text-center py-4 text-gray-500">No hay proveedores registrados.</td>
                 </tr>
               )}
             </tbody>
@@ -124,12 +110,8 @@ export default function GestionProveedores() {
 
       {/* Modal */}
       {showModal && (
-        <ModalProveedor
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveSuccess}
-          proveedorData={proveedorToEdit}
-        />
+        <ModalProveedor show={showModal} onClose={() => setShowModal(false)}
+          onSave={handleSaveSuccess} proveedorData={proveedorToEdit}/>
       )}
     </div>
   );

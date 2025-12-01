@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  ShoppingBagIcon,
-  CurrencyDollarIcon,
-  UserGroupIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
-  ClockIcon,
-  ChartBarIcon,
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { ShoppingBagIcon, CurrencyDollarIcon, UserGroupIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, ClockIcon, ChartBarIcon, PlusIcon
 } from "@heroicons/react/24/outline";
 
 const Dashboard = () => {
@@ -17,83 +12,44 @@ const Dashboard = () => {
     revenue: 0,
   });
 
+  const [activities, setActivities] = useState([]);
+
   useEffect(() => {
-    const simulatedData = {
-      totalSales: 1245,
-      totalProducts: 89,
-      totalCustomers: 342,
-      revenue: 45236.5,
+    const cargarDashboard = async () => {
+      try {
+        const resStats = await axios.get("http://localhost:8500/api/dashboard/stats");
+        setStats({
+          totalSales: resStats.data.totalSales,
+          totalProducts: resStats.data.totalProducts,
+          totalCustomers: resStats.data.totalCustomers,
+          revenue: resStats.data.revenue,
+        });
+
+        const resActivities = await axios.get("http://localhost:8500/api/dashboard/activities");
+        setActivities(resActivities.data);
+      } catch (error) {
+        console.error("Error cargando dashboard:", error);
+      }
     };
 
-    const interval = setInterval(() => {
-      setStats((prev) => ({
-        totalSales: Math.min(prev.totalSales + 25, simulatedData.totalSales),
-        totalProducts: Math.min(prev.totalProducts + 5, simulatedData.totalProducts),
-        totalCustomers: Math.min(prev.totalCustomers + 10, simulatedData.totalCustomers),
-        revenue: Math.min(prev.revenue + 1000, simulatedData.revenue),
-      }));
-    }, 50);
-
-    return () => clearInterval(interval);
+    cargarDashboard();
   }, []);
 
   const statsData = [
-    {
-      title: "Ventas Totales",
-      value: stats.totalSales,
-      icon: ShoppingBagIcon,
-      color: "bg-blue-500",
-      trend: "up",
-      change: "+12.5%",
-    },
-    {
-      title: "Productos",
-      value: stats.totalProducts,
-      icon: ShoppingBagIcon,
-      color: "bg-green-500",
-      trend: "up",
-      change: "+5.2%",
-    },
-    {
-      title: "Clientes",
-      value: stats.totalCustomers,
-      icon: UserGroupIcon,
-      color: "bg-purple-500",
-      trend: "up",
-      change: "+8.7%",
-    },
-    {
-      title: "Ingresos",
-      value: `$${stats.revenue.toLocaleString()}`,
-      icon: CurrencyDollarIcon,
-      color: "bg-yellow-500",
-      trend: "up",
-      change: "+15.3%",
-    },
-  ];
-
-  const recentActivities = [
-    { id: 1, action: "Nuevo pedido", user: "Juan Pérez", time: "Hace 2 min", type: "sale" },
-    { id: 2, action: "Producto agregado", user: "María García", time: "Hace 15 min", type: "product" },
-    { id: 3, action: "Usuario registrado", user: "Carlos López", time: "Hace 30 min", type: "user" },
-    { id: 4, action: "Pago procesado", user: "Ana Martínez", time: "Hace 45 min", type: "payment" },
-    { id: 5, action: "Producto agotado", user: "Sistema", time: "Hace 1 h", type: "alert" },
+    { title: "Ventas Totales", value: stats.totalSales, icon: ShoppingBagIcon, color: "bg-blue-500", trend: "up", change: "+12.5%",},
+    { title: "Productos", value: stats.totalProducts, icon: ShoppingBagIcon, color: "bg-green-500", trend: "up", change: "+5.2%", },
+    { title: "Clientes", value: stats.totalCustomers, icon: UserGroupIcon, color: "bg-purple-500", trend: "up", change: "+8.7%", },
+    { title: "Ingresos", value: `S/ ${Number(stats.revenue).toLocaleString()}`, icon: CurrencyDollarIcon, color: "bg-yellow-500", trend: "up", change: "+15.3%", },
   ];
 
   const getActivityIcon = (type) => {
     switch (type) {
-      case "sale":
-        return "🛒";
-      case "product":
-        return "📦";
-      case "user":
-        return "👤";
-      case "payment":
-        return "💳";
-      case "alert":
-        return "⚠️";
-      default:
-        return "📝";
+      case "sale": return "🛒";
+      case "product": return "📦";
+      case "user": return "👤";
+      case "payment": return "💳";
+      case "alert": return "⚠️";
+      default: return "📝";
     }
   };
 
@@ -165,85 +121,77 @@ const Dashboard = () => {
               <ClockIcon className="h-5 w-5 text-gray-500" />
             </div>
             <div className="space-y-4">
-              {recentActivities.map((activity) => (
+              {activities.map((activity) => (
                 <div key={activity.id} className="flex items-start animate-fade-in">
                   <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getActivityColor(activity.type)} mr-3`}>
                     {getActivityIcon(activity.type)}
                   </span>
                   <div className="flex-1">
                     <p className="font-medium text-gray-800">{activity.action}</p>
-                    <p className="text-sm text-gray-600">{activity.user}</p>
+                    <p className="text-sm text-gray-600">{activity.user || "Sistema"}</p>
                   </div>
-                  <span className="text-xs text-gray-500 whitespace-nowrap">{activity.time}</span>
+                  <span className="text-xs text-gray-500 whitespace-nowrap">
+                    {new Date(activity.time).toLocaleString() || "Hace poco"}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mt-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-800">Acciones Rápidas</h2>
-              <ChartBarIcon className="h-5 w-5 text-gray-500" />
+              <ChartBarIcon className="h-5 w-5 text-indigo-500" />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <button className="flex flex-col items-center justify-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-all duration-300 transform hover:-translate-y-1">
+              {/* Agregar Producto */}
+              <Link
+                to="/productos"
+                className="flex flex-col items-center justify-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-all duration-300 transform hover:-translate-y-1"
+              >
                 <div className="p-2 bg-indigo-100 rounded-full mb-2">
-                  <svg
-                    className="h-6 w-6 text-indigo-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
+                  <PlusIcon className="h-6 w-6 text-indigo-600" />
                 </div>
                 <span className="text-sm font-medium text-indigo-700">Agregar Producto</span>
-              </button>
+              </Link>
 
-              <button className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-all duration-300 transform hover:-translate-y-1">
+              {/* Realizar Venta */}
+              <Link
+                to="/ventas"
+                className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-all duration-300 transform hover:-translate-y-1"
+              >
                 <div className="p-2 bg-green-100 rounded-full mb-2">
-                  <svg
-                    className="h-6 w-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
+                  <ShoppingBagIcon className="h-6 w-6 text-green-600" />
                 </div>
-                <span className="text-sm font-medium text-green-700">Ver Inventario</span>
-              </button>
+                <span className="text-sm font-medium text-green-700">Realizar Venta</span>
+              </Link>
 
-              <button className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-all duration-300 transform hover:-translate-y-1">
+              {/* Reportes */}
+              <Link
+                to="/reportes"
+                className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-all duration-300 transform hover:-translate-y-1"
+              >
                 <div className="p-2 bg-purple-100 rounded-full mb-2">
-                  <svg
-                    className="h-6 w-6 text-purple-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                  </svg>
+                  <ChartBarIcon className="h-6 w-6 text-purple-600" />
                 </div>
                 <span className="text-sm font-medium text-purple-700">Reportes</span>
-              </button>
+              </Link>
 
-              <button className="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-all duration-300 transform hover:-translate-y-1">
+              {/* Agregar Empleado */}
+              <Link
+                to="/empleados"
+                className="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-all duration-300 transform hover:-translate-y-1"
+              >
                 <div className="p-2 bg-yellow-100 rounded-full mb-2">
-                  <svg
-                    className="h-6 w-6 text-yellow-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
+                  <UserGroupIcon className="h-6 w-6 text-yellow-600" />
                 </div>
-                <span className="text-sm font-medium text-yellow-700">Soporte</span>
-              </button>
+                <span className="text-sm font-medium text-yellow-700">Agregar Empleado</span>
+              </Link>
             </div>
           </div>
+
+
         </div>
       </main>
     </div>
