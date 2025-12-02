@@ -124,7 +124,7 @@ export default function Ventas() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8500/api/ventas/registrar",
+        `${import.meta.env.VITE_API_URL}/api/ventas/registrar`,
         venta
       );
       alert("Venta registrada con éxito");
