@@ -4,8 +4,8 @@ import ModalProducto from '../components/ModalProducto';
 import ModalCategoria from '../components/ModalCategoria';
 import { PencilIcon, TrashIcon, ArchiveBoxIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-const API_PRODUCTS = 'http://localhost:8500/api/productos';
-const API_CATEGORIES = 'http://localhost:8500/api/categorias';
+const API_PRODUCTS = `${import.meta.env.VITE_API_URL}/api/productos`;
+const API_CATEGORIES = `${import.meta.env.VITE_API_URL}/api/categorias`;
 const PAGE_SIZE = 20;
 
 export default function Productos() {
@@ -210,7 +210,7 @@ export default function Productos() {
                         </td>
                         <td className="px-4 py-2 text-sm">{p.categoria?.categoria}</td>
                         <td className="px-4 py-2 text-sm">
-                          <img src={`http://localhost:8500${p.imagen}`} alt={p.producto} className="h-10 w-10 object-cover rounded"/>
+                          <img src={`${import.meta.env.VITE_API_URL}${p.imagen}`} alt={p.producto} className="h-10 w-10 object-cover rounded"/>
                         </td>
                         <td className="px-4 py-2 text-sm">
                           <label className="inline-flex items-center gap-2">

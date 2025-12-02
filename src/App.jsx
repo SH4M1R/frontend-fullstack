@@ -26,8 +26,6 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
-          {/* { <Route path="/TwoFAVerification" element={<TwoFAVerification />} />} */}
 
 
           <Route element={<PrivateRoute />}>

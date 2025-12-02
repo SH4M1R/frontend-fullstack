@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
-  const [contrasena, setContrasena] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -15,10 +15,13 @@ export default function Login() {
   setError("");
 
   try {
-    const response = await fetch("http://localhost:8500/api/auth/login", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, contrasena }),
+      body: JSON.stringify({
+        username,
+        password,
+      }),
     });
 
     if (!response.ok) {
