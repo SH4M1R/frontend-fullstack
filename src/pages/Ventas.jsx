@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import MetodoPago from "../Components/MetodoPago";
+import MetodoPago from "../components/MetodoPago";
 import { ShoppingCart } from "lucide-react";
 
 export default function Ventas() {
