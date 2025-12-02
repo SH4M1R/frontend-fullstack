@@ -210,7 +210,7 @@ export default function Ventas() {
                 <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-sm mb-2">
                   {p.imagen ? (
                     <img
-                      src={`http://localhost:8500${p.imagen}`}
+                      src={`${import.meta.env.VITE_API_URL}/${p.imagen}`}
                       alt={p.producto}
                       className="w-full h-full object-cover rounded-lg"
                     />
