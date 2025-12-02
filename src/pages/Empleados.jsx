@@ -17,7 +17,7 @@ export default function Empleados() {
   const fetchEmpleados = async () => {
     setLoading(true);
     try {
-      const res = await authFetch("http://localhost:8500/api/empleados"); 
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/api/empleados`); 
       if (!res.ok) throw new Error("Error al obtener empleados");
       const data = await res.json();
       setEmpleados(data);
@@ -43,7 +43,7 @@ export default function Empleados() {
     if (!window.confirm(`¿Seguro de eliminar al empleado con ID ${idEmpleado}?`)) return;
 
     try {
-      const res = await authFetch(`http://localhost:8500/api/empleados/${idEmpleado}`, {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/api/empleados/${idEmpleado}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Error al eliminar");

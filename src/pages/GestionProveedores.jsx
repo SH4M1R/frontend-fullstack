@@ -17,7 +17,7 @@ export default function GestionProveedores() {
   const fetchProveedores = async () => {
     setLoading(true);
     try {
-      const res = await authFetch("http://localhost:8500/api/proveedores");
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/api/proveedores`);
       if (!res.ok) throw new Error("Error al obtener proveedores");
       const data = await res.json();
       setProveedores(data);
@@ -43,7 +43,7 @@ export default function GestionProveedores() {
     if (!window.confirm(`¿Seguro de eliminar el proveedor con ID ${idProveedor}?`)) return;
 
     try {
-      const res = await authFetch(`http://localhost:8500/api/proveedores/${idProveedor}`, {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/api/proveedores/${idProveedor}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Error al eliminar proveedor");

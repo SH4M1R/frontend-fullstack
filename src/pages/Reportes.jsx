@@ -9,7 +9,7 @@ export default function Reportes() {
   const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8500/api/ventas/listar")
+    fetch(`${import.meta.env.VITE_API_URL}/api/ventas/listar`)
       .then((res) => {
         if (!res.ok) throw new Error("Error en la respuesta del servidor");
         return res.json();
@@ -37,7 +37,7 @@ export default function Reportes() {
   };
 
   const verBoleta = (idVenta) => {
-    const url = `http://localhost:8500/api/ventas/${idVenta}/boleta`;
+    const url = `${import.meta.env.VITE_API_URL}/api/ventas/${idVenta}/boleta`;
     window.open(url, "_blank");
   };
 

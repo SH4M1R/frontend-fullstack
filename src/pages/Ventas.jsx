@@ -19,12 +19,12 @@ export default function Ventas() {
   // Cargar productos y categorías
   useEffect(() => {
     axios
-      .get("http://localhost:8500/api/productos")
+      .get(`${import.meta.env.VITE_API_URL}/api/productos`)
       .then((res) => setProductos(res.data))
       .catch(() => console.error("Error al cargar productos"));
 
     axios
-      .get("http://localhost:8500/api/categorias")
+      .get(`${import.meta.env.VITE_API_URL}/api/categorias`)
       .then((res) => setCategorias(res.data))
       .catch(() => console.error("Error al cargar categorías"));
   }, []);

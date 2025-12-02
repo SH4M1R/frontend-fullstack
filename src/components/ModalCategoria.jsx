@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_CATEGORIES = 'http://localhost:8500/api/categorias';
+// const API_CATEGORIES = 'http://localhost:8500/api/categorias';
+const API_CATEGORIES = `${import.meta.env.VITE_API_URL}/api/categorias`;
 
 export default function ModalCategoria({ open, onClose, onCreated }) {
   const [nombre, setNombre] = useState('');

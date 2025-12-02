@@ -17,7 +17,7 @@ const Dashboard = () => {
   useEffect(() => {
     const cargarDashboard = async () => {
       try {
-        const resStats = await axios.get("http://localhost:8500/api/dashboard/stats");
+        const resStats = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/stats`);
         setStats({
           totalSales: resStats.data.totalSales,
           totalProducts: resStats.data.totalProducts,
@@ -25,7 +25,7 @@ const Dashboard = () => {
           revenue: resStats.data.revenue,
         });
 
-        const resActivities = await axios.get("http://localhost:8500/api/dashboard/activities");
+        const resActivities = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/activities`);
         setActivities(resActivities.data);
       } catch (error) {
         console.error("Error cargando dashboard:", error);

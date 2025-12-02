@@ -13,7 +13,9 @@ export default function ModalEmpleado({ show, onClose, onSave, empleadoData }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const BASE_URL = "http://localhost:8500/api";
+  // const BASE_URL = "http://localhost:8500/api";
+  const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+
 
   useEffect(() => {
     if (show) {

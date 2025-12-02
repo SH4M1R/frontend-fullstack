@@ -17,7 +17,8 @@ export default function ModalProveedor({ show, onClose, onSave, proveedorData })
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const BASE_URL = "http://localhost:8500/api/proveedores";
+
+  const BASE_URL = `${import.meta.env.VITE_API_URL}/api/proveedores`;
 
   useEffect(() => {
     if (isEditing && proveedorData) {
